@@ -126,8 +126,31 @@ class GamesConfig(_Strict):
     cfr_iterations: int = Field(ge=10)
 
 
+class KellyConfig(_Strict):
+    p: float = Field(gt=0, lt=1)
+    odds: float = Field(gt=0)
+    multiples: list[float] = Field(min_length=1)
+    bets: int = Field(ge=10)
+    paths: int = Field(ge=100)
+    ruin_level: float = Field(gt=0, lt=1)
+    drawdown_level: float = Field(gt=0, lt=1)
+    sample_sizes: list[int] = Field(min_length=1)
+    max_fraction: float = Field(gt=0, lt=1)
+
+    @model_validator(mode="after")
+    def _largest_bet_is_below_the_bankroll(self) -> KellyConfig:
+        kelly = self.p - (1 - self.p) / self.odds
+        if kelly <= 0:
+            raise ValueError("kelly: the example bet must have a positive edge")
+        if max(self.multiples) * kelly >= 1:
+            raise ValueError("kelly: the largest multiple would stake the whole bankroll")
+        if min(self.multiples) <= 0 or min(self.sample_sizes) < 1:
+            raise ValueError("kelly: multiples and sample sizes must be positive")
+        return self
+
+
 # Sections that change computed numbers (not paths or logging).
-RESULT_SECTIONS = ("random", "monte_carlo", "cards", "games")
+RESULT_SECTIONS = ("random", "monte_carlo", "cards", "games", "kelly")
 
 
 class Config(_Strict):
@@ -140,6 +163,7 @@ class Config(_Strict):
     trainer: TrainerConfig
     cards: CardsConfig
     games: GamesConfig
+    kelly: KellyConfig
 
     def results_hash(self) -> str:
         """Hash of everything that changes generated numbers. Two reports with the same

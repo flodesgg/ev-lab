@@ -13,7 +13,7 @@ It has three jobs:
 
 ## Status
 
-Stages 0, A, B, C and D are done; see [STATUS.md](STATUS.md) for the roadmap.
+Stages 0, A, B, C, D and E are done; see [STATUS.md](STATUS.md) for the roadmap.
 
 - **Exact toolkit** (`src/ev_lab/prob/`): finite distributions, absorbing Markov chains,
   optimal stopping by backward induction, exact polygon areas, a Monte Carlo checker.
@@ -31,6 +31,9 @@ Stages 0, A, B, C and D are done; see [STATUS.md](STATUS.md) for the roadmap.
 - **Game theory** (`src/ev_lab/games/`): zero-sum matrix games solved by linear programming
   and certified exactly, regret matching, and vanilla CFR on Kuhn poker with best response
   and exploitability. Results: [reports/games/games.md](reports/games/games.md).
+- **Bet sizing** (`src/ev_lab/kelly/`): the Kelly criterion, fractional Kelly on simulated
+  paths, drawdowns against the continuous-time approximation, and what happens when the
+  edge is only an estimate. Results: [reports/kelly/kelly.md](reports/kelly/kelly.md).
 
 ## What this is not
 
@@ -61,6 +64,9 @@ uv run ev cards-check --full          # evaluator + equity checks -> reports/car
 
 uv run ev games                       # LP, regret matching, Kuhn CFR -> reports/games/
 uv run ev indifference --pot 2 --bet 1
+
+uv run ev kelly                       # growth curve, simulations, estimated edge -> reports/kelly/
+uv run ev kelly-bet --p 0.55 --odds 1
 
 uv run ev puzzle list                 # what is there, and my status (no answers)
 uv run ev puzzle list --tag markov --difficulty 2

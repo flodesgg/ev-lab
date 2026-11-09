@@ -24,9 +24,13 @@ second, external confirmation.
 
 | Kuhn poker: rules, value -1/18 for the first player, the one-parameter equilibrium family | `games/kuhn.py` | Wikipedia, "Kuhn poker", https://en.wikipedia.org/wiki/Kuhn_poker (original: H. W. Kuhn, "Simplified Two-Person Poker", 1950, not opened) | Rules and payouts; player 1: bet the jack with alpha in [0, 1/3], the king with 3 alpha, always check the queen and call with it alpha + 1/3, fold the jack, call the king; player 2: king always bets/calls, queen checks and calls 1/3, jack never calls and bets 1/3; "lose at a rate of -1/18 per hand". The code then proves it: exact value -1/18 and exact exploitability 0 (`tests/test_games.py`). |
 
+| Kelly fraction f* = p - q/b and log growth p ln(1 + b f) + q ln(1 - f) | `kelly/core.py` | Wikipedia, "Kelly criterion", https://en.wikipedia.org/wiki/Kelly_criterion (original: J. L. Kelly, 1956, not opened) | The page gives f* = p/l - q/g and u = p log(1 + f g) + q log(1 - f l) with gain g and loss l; with l = 1 and g = b this is the formula used. Even money: "bets 2p - 1 times their initial wealth". The code checks that f* is the argmax of g on a fine grid. The page does **not** state the "twice Kelly gives zero growth" rule; that is computed here (exact g(2 f*) in the report). |
+
 Not taken from a source: the closed forms quoted in puzzle explanations (ballot theorem,
-gambler's ruin, a*b duration of a fair walk, gap symmetry). Each is tested against an
-independent computation in `tests/test_puzzles.py`.
+gambler's ruin, a*b duration of a fair walk, gap symmetry), each tested against an
+independent computation in `tests/test_puzzles.py`; and the continuous-time drawdown formula
+x^(2/c - 1), which is derived in `kelly/core.py` (geometric Brownian motion) and reported as
+an approximation next to the simulation, never as a reference value.
 
 ## Cited for the method only (no number is taken from them)
 
@@ -34,7 +38,3 @@ independent computation in `tests/test_puzzles.py`.
   Incomplete Information": the CFR algorithm. Not opened; the implementation is validated by
   its results (value, exploitability, equilibrium family), not by the paper.
 - Hart & Mas-Colell (2000): regret matching. Same remark.
-
-## To be checked when first used
-
-- Stage E: Kelly criterion (Kelly, 1956) and the continuous-time drawdown approximations.

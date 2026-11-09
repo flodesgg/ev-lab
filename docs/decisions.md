@@ -139,3 +139,23 @@ are recorded here too, with the test that now catches them.
   the learned alpha.
 - **D-039 Vanilla CFR with simultaneous updates,** full traversal of the six deals per
   iteration, average strategy weighted by the player's own reach probability.
+
+## Stage E (2026-11-09)
+
+- **D-040 Example bet: p = 0.55 at even money,** so f* = 1/10 exactly and 2 f* = 0.2 stays
+  far from staking the whole bankroll. The config refuses a bet without edge and a multiple
+  that would stake 100%.
+- **D-041 All bet sizes use the same simulated win/loss sequences** (common random numbers).
+  Log wealth is computed from cumulative win counts, so one integer array serves every size.
+  Consequence: the z-score of "simulated growth vs g(f)" is identical for all sizes.
+- **D-042 Three kinds of numbers are labelled in the report:** exact (formulas, binomial
+  sums), simulation (with SE), approximation (x^(2/c - 1), derived for geometric Brownian
+  motion with an infinite horizon). The mean terminal wealth is shown next to its exact
+  expectation to make visible that the sample mean is unreliable for large stakes.
+- **D-043 Estimated edge: stake = min(cap, max(0, Kelly(p_hat))) with cap = 0.9.** Without a
+  cap, a sample with only wins gives p_hat = 1 and a stake of 100%, whose log growth is minus
+  infinity, so the expected growth of naive Kelly on an estimate is minus infinity for every
+  n. The cap is a modelling choice; the report says so. The expected growth is an exact
+  binomial sum, checked against sampling in a test.
+- **D-044 `hit_probability_approx` returns 1 for multiples >= 2** (non-positive drift: the
+  level is reached eventually).

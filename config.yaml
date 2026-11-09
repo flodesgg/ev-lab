@@ -56,3 +56,14 @@ cards:
 games:
   regret_iterations: 100000   # regret-matching self-play rounds per matrix game
   cfr_iterations: 100000      # vanilla CFR iterations on Kuhn poker
+
+kelly:
+  p: 0.55                   # true win probability of the example bet
+  odds: 1.0                 # net odds b: win b per 1 staked
+  multiples: [0.25, 0.5, 1.0, 1.5, 2.0]   # bet sizes as multiples of the Kelly fraction
+  bets: 1000                # bets per simulated path
+  paths: 10000
+  ruin_level: 0.1           # report P(terminal wealth below this share of the start)
+  drawdown_level: 0.5       # report P(wealth ever falls to this share of the start)
+  sample_sizes: [10, 20, 50, 100, 200, 500, 1000, 2000, 5000]   # n past bets used to estimate p
+  max_fraction: 0.9         # cap on the bet when sizing from an estimate (see decisions D-043)

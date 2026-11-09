@@ -220,3 +220,47 @@ A best response is the most profitable strategy against a fixed opponent strateg
 Exploitability measures how far a strategy pair is from equilibrium: how much a
 best-responding opponent would win above the game value (here averaged over both seats). It is
 zero exactly at a Nash equilibrium, so it is the honest progress measure for a solver.
+
+## Stage E
+
+### Why maximise the logarithm of wealth
+Bets that are a fraction of wealth multiply wealth, and repeated multiplication is addition in
+logs. By the law of large numbers the average log growth per bet settles at its expectation
+g(f), so after many bets wealth is about exp(g(f) x bets): the stake with the highest g ends
+up ahead of every other fixed stake almost surely. Expected *wealth* is maximised by betting
+everything, which almost surely ends in ruin; the mean is carried by a vanishing set of
+lucky paths.
+
+### Kelly criterion
+For a bet that wins with probability p at net odds b, the growth-optimal stake is
+f* = p - (1 - p)/b: the edge divided by the odds. At even money it is 2p - 1. If the edge is
+zero or negative, the Kelly bet is zero.
+
+### Overbetting
+g(f) is a hill: it rises to f*, falls, and is back at about zero near 2 f*. Beyond that,
+wealth shrinks in the long run even though every single bet has positive expected value.
+"Positive EV" is not enough; size decides whether an edge makes or loses money.
+
+### Fractional Kelly
+Staking half of Kelly keeps about three quarters of the growth rate (2c - c^2 with c = 1/2)
+and cuts the chance of halving the bankroll from about 1/2 to about 1/8. The trade is
+asymmetric in your favour, which is why practitioners bet a fraction of Kelly.
+
+### Drawdown and the continuous-time approximation
+A drawdown is the fall from the highest wealth so far. If wealth moves like a geometric
+Brownian motion (many small bets), the chance of ever falling to a share x of the starting
+wealth when staking c x Kelly is x^(2/c - 1). It is an approximation: it assumes continuous
+movement and an infinite horizon. The report shows where a discrete simulation agrees with
+it and where it does not.
+
+### Parameter uncertainty
+The Kelly formula needs the true p, which nobody has. An estimate from n past bets is noisy,
+and the hill is steeper on the overbetting side, so errors upwards cost more than errors
+downwards gain. With few observations, full Kelly on the estimate has negative expected
+growth even though the true edge is positive. This is the quantitative reason for fractional
+Kelly, and for not sizing a position on an edge whose confidence interval includes zero.
+
+### Common random numbers
+To compare strategies by simulation, run all of them on the same random outcomes. The
+differences between them then come from the strategies and not from different luck, which
+removes most of the noise from the comparison.
