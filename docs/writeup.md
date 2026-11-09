@@ -65,9 +65,11 @@ These come before the results on purpose.
 from its own named random stream; the exact answer must lie within 4 standard errors of the
 simulated mean. Result: 29 puzzles checked, 29 agree, largest |z| 3.86
 ([reports/puzzles/check_all.md](../reports/puzzles/check_all.md)). A z of 3.86 in 29 checks
-is unusual, so I did not leave it at "it passed": re-running that simulator on 200
-independent seeds gave z-scores with mean +0.028 and standard deviation 0.95, which is what
-an unbiased simulator produces. The seed was kept (decision D-046). Beyond simulation, many
+is unusual, so I did not leave it at "it passed": re-running every simulator on 200
+independent seeds gave, for that puzzle, z-scores with mean +0.004 and standard deviation
+0.98, which is what an unbiased simulator produces, and flagged none of the 29
+([reports/puzzles/bias_check.md](../reports/puzzles/bias_check.md)). The seed was kept
+(decision D-046). Beyond simulation, many
 answers have a second exact method in the tests: brute force over all permutations for the
 hat problem, over all counting orders for the ballot problem, value iteration for the
 re-roll game, closed forms for gambler's ruin and the fair-walk duration. Five reference
@@ -83,10 +85,10 @@ game with a fixed seed must reproduce a stored outcome
 **Hand evaluator: oracle and enumeration.** The fast evaluator and the oracle agree on
 100,000 random 7-card hands with 0 mismatches
 ([reports/cards/cards_check.md](../reports/cards/cards_check.md)), and in the slow test set
-on one million random hands and on every 5-card hand. Independently, classifying all
+on a much larger sample and on every 5-card hand. Independently, classifying all
 2,598,960 five-card hands and all 133,784,560 seven-card hands gives exactly the known count
-in each of the nine categories (same file; source in [sources.md](sources.md)). Eighteen
-hand-written 7-card edge cases cover the wheel, the steel wheel, a straight and a flush that
+in each of the nine categories (same file; source in [sources.md](sources.md)). Hand-written
+7-card edge cases cover the wheel, the steel wheel, a straight and a flush that
 do not make a straight flush, two sets of trips, and three pairs.
 
 **Equity.** Exact enumeration is compared with an independent slow implementation (plain

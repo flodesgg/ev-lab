@@ -282,3 +282,17 @@ def test_shortcuts_quoted_in_explanations_hold() -> None:
     assert expected_max_of_draws.solve() == F(m * (n + 1), m + 1) == n - F(n - m, m + 1)
     assert math.comb(23, 2) == 253  # "23 people form 253 pairs"
     assert rope_loops.solve() == sum((F(1, 2 * k - 1) for k in range(1, 11)), F(0))
+
+
+@pytest.mark.slow
+@pytest.mark.parametrize("p", PUZZLES, ids=lambda p: p.id)
+def test_no_simulator_is_biased_across_independent_seeds(p: Puzzle) -> None:
+    """A single run can pass by luck. Over many seeds the z-scores of unbiased code average
+    to zero: their mean times sqrt(number of seeds) is itself a standard normal draw."""
+    exact = p.solve()
+    seeds = 25
+    zs = [
+        run_mc(p.simulate, 100_000, rng_for(4242, f"bias-test:{p.id}:{k}")).z(exact)
+        for k in range(seeds)
+    ]
+    assert abs(sum(zs) / seeds) * math.sqrt(seeds) < 4.0, p.id

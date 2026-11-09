@@ -166,3 +166,16 @@ are recorded here too, with the test that now catches them.
   "(dirty)" merely because an earlier report or a practice log had been written in the same
   working tree. Dirty now means: code, config, tests or docs differ from the commit.
   Test: `tests/test_runinfo.py::test_inside_git_reports_commit_and_dirty_flag`.
+- **D-046 A z of 3.86 was investigated, not re-seeded.** `ev puzzle check-all` passes at the
+  fixed seed with a largest |z| of 3.86 (`random_walk_duration`), unusually close to the
+  limit of 4. Changing the seed until the table looks calm would be adjusting the evidence.
+  Instead `ev puzzle bias-check` repeats the comparison on many independent seeds for every
+  puzzle: an unbiased simulator gives z-scores with mean 0 and standard deviation 1. Result
+  in `reports/puzzles/bias_check.md`: no puzzle is flagged. The seed stays as it is.
+- **D-047 Documentation numbers are tested** (`tests/test_docs_numbers.py`): each figure
+  quoted in README, the write-up and the interview notes must occur in the report it cites,
+  reports must have been generated from committed code, and limitations must precede
+  results.
+- **D-048 No practice figure in the README yet.** The build prompt asks for a figure of my
+  practice progress. No real session has been logged, and a figure from synthetic data
+  would be a fabricated result, so the README says where the figure will appear instead.

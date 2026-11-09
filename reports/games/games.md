@@ -42,6 +42,17 @@ Certified = the row strategy guarantees the value against every column and the c
 | 1/4 | -1/18 | 0 |
 | 1/3 | -1/18 | 0 |
 
+## Indifference frequencies in Kuhn poker (exact)
+
+Pot 2 (two antes), bet 1. Bluff share that makes a caller indifferent, B / (P + 2B): **1/4**. Calling frequency that makes a bluff break even, P / (P + B): **2/3**.
+
+| alpha | bluffs in player 1's betting range | player 2 calls a jack's bluff |
+|---|---|---|
+| 1/12 | 1/4 | 2/3 |
+| 1/6 | 1/4 | 2/3 |
+| 1/4 | 1/4 | 2/3 |
+| 1/3 | 1/4 | 2/3 |
+
 ## Kuhn poker: CFR convergence (approximation)
 
 Figure: `kuhn_exploitability.png` (log-log).
@@ -90,4 +101,4 @@ P(bet or call) at each information set (card + history; p = pass, b = bet).
 | `Kb` | 1.0000 | 1.0000 | -0.0000 |
 
 ---
-_run 20261109T215349Z-43c4bc · commit 4505a18a9fa7 · config e5861062b213 · seed 20261109_
+_run 20261109T220142Z-b3920f · commit ab81588b3155 (dirty) · config e5861062b213 · seed 20261109_
