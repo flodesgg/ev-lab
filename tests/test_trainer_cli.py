@@ -90,7 +90,10 @@ def test_math_command_logs_every_answer(workdir: Path) -> None:
     assert result.exit_code == 0, result.output
     assert "3 questions in 1 minutes" in result.output
     assert "Correct: 2/3" in result.output
-    rows = _rows(workdir / "practice" / math_log.FILE_NAME)
+    assert "Asked more often" not in result.output  # no history yet: nothing to focus on
+    again = runner.invoke(app, ["math", "--preset", "tiny", "--seed", "1"], input="\n")
+    assert "Asked more often today" in again.output  # now there is a history
+    rows = _rows(workdir / "practice" / math_log.FILE_NAME)[:3]
     assert list(rows[0]) == list(math_log.HEADER)
     assert [r["correct"] for r in rows] == ["1", "0", "1"]
     assert len({r["session_id"] for r in rows}) == 1

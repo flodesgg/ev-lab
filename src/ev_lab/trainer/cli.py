@@ -47,7 +47,8 @@ def _math(ctx: Context, io: ConsoleIO, seed: int, preset: str, level: int | None
         f"[bold]Mental math[/bold]: {p.questions} questions in {p.minutes:g} minutes, level "
         f"{use_level}. Enter skips a question. {TOLERANCE_NOTE}"
     )
-    io.say(f"Asked more often today: {', '.join(TITLES[c] for c in focus)}.")
+    if max(weights.values()) > min(weights.values()):  # no history: all weights are equal
+        io.say(f"Asked more often today: {', '.join(TITLES[c] for c in focus)}.")
     if io.ask("Press Enter to start the clock ") is None:
         raise typer.Exit(code=1)
     summary = run_math_session(
