@@ -159,3 +159,10 @@ are recorded here too, with the test that now catches them.
   binomial sum, checked against sampling in a test.
 - **D-044 `hit_probability_approx` returns 1 for multiples >= 2** (non-positive drift: the
   level is reached eventually).
+
+## Stage F (2026-11-09)
+
+- **D-045 `git_dirty` ignores `reports/` and `practice/`.** A report used to be stamped
+  "(dirty)" merely because an earlier report or a practice log had been written in the same
+  working tree. Dirty now means: code, config, tests or docs differ from the commit.
+  Test: `tests/test_runinfo.py::test_inside_git_reports_commit_and_dirty_flag`.

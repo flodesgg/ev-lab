@@ -31,6 +31,12 @@ def test_inside_git_reports_commit_and_dirty_flag(tmp_path: Path) -> None:
     assert re.fullmatch(r"[0-9a-f]{12}", clean.git_commit)
     assert clean.git_dirty is False
 
+    # generated outputs do not make the code "dirty" ...
+    for folder in ("reports", "practice"):
+        (tmp_path / folder).mkdir()
+        (tmp_path / folder / "out.md").write_text("generated")
+    assert new_run_info("h", seed=1, repo=tmp_path).git_dirty is False
+    # ... but any other change does
     (tmp_path / "b.txt").write_text("b")
     assert new_run_info("h", seed=1, repo=tmp_path).git_dirty is True
 

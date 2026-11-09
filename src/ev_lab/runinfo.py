@@ -9,6 +9,9 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 
+OUTPUT_DIRS = ("reports", "practice")
+
+
 @dataclass(frozen=True)
 class RunInfo:
     run_id: str
@@ -43,7 +46,11 @@ def _git(args: list[str], cwd: Path) -> str | None:
 def new_run_info(config_hash: str, seed: int, repo: Path = Path(".")) -> RunInfo:
     now = datetime.now(UTC)
     commit = _git(["rev-parse", "--short=12", "HEAD"], repo) or "no-git"
-    status = _git(["status", "--porcelain"], repo)
+    # "dirty" is about code and config. Generated outputs (reports, practice logs) change
+    # with every run and must not mark the code that produced them as modified.
+    status = _git(
+        ["status", "--porcelain", "--", ".", *(f":(exclude){d}" for d in OUTPUT_DIRS)], repo
+    )
     return RunInfo(
         run_id=f"{now:%Y%m%dT%H%M%SZ}-{uuid.uuid4().hex[:6]}",
         started_utc=now.isoformat(timespec="seconds"),
