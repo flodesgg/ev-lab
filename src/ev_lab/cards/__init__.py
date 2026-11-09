@@ -1,4 +1,4 @@
-"""Cards: deck, hand evaluators, equity, range parser.
+"""Cards as mathematical objects: deck, hand evaluators, equity, range parser.
 
-Built in Stage C; empty until then.
+Offline study only: nothing here connects to, or assists play on, any gambling site.
 """

@@ -20,13 +20,14 @@ second, external confirmation.
 | Monty Hall, switching wins with 2/3 | `puzzles/monty_hall.py` | Wikipedia, "Monty Hall problem", https://en.wikipedia.org/wiki/Monty_Hall_problem | "Under these standard assumptions, the probability of winning the car after switching is 2/3." |
 | Expected fixed points of a random permutation = 1; D(n+2) = (n+1)(D(n+1) + D(n)); D(n,k) = C(n,k) D(n-k) | `puzzles/fixed_points_permutation.py` | Wikipedia, "Rencontres numbers", https://en.wikipedia.org/wiki/Rencontres_numbers | Expected value 1 for n >= 1; the derangement recurrence and the formula for k fixed points. The recurrence is also checked by brute force for n <= 6. |
 
+| Category counts of all 2,598,960 five-card hands and all 133,784,560 seven-card hands | `cards/reference.py`, `tests/test_cards.py` | Wikipedia, "Poker probability", https://en.wikipedia.org/wiki/Poker_probability | Both frequency tables, every row. The page lists royal flushes separately (4 and 4,324); added to the other straight flushes (36 and 37,260) they give 40 and 41,584. The totals match C(52,5) and C(52,7). |
+
 Not taken from a source: the closed forms quoted in puzzle explanations (ballot theorem,
 gambler's ruin, a*b duration of a fair walk, gap symmetry). Each is tested against an
 independent computation in `tests/test_puzzles.py`.
 
 ## To be checked when first used
 
-- Stage C: category counts for all 5-card and all 7-card poker hands.
 - Stage D: the value of Kuhn poker and its one-parameter family of equilibria (Kuhn, 1950);
   CFR (Zinkevich, Johanson, Bowling & Piccione, 2007).
 - Stage E: Kelly criterion (Kelly, 1956) and the continuous-time drawdown approximations.

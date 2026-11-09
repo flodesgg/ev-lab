@@ -123,3 +123,44 @@ can be known that you do not know, and competition forces tighter quotes.
 Timed numerical tests reward fast, correct answers and often penalise wrong ones. Practising
 what you are already good at feels productive but changes little; the trainer therefore asks
 weak and slow categories more often and reports accuracy per category, not only overall.
+
+## Stage C
+
+### Hand evaluator
+A function that turns a set of cards into one number such that a better poker hand always has
+a larger number. Here the number is "category, then tiebreakers": a pair of kings with an ace
+kicker is (pair, K, A, ...). With five cards this is a short case analysis; that simple
+version is the *oracle* against which the fast version is tested.
+
+### Why a 7-card evaluator needs care
+You must find the best five of seven cards, and the best five is not always the most obvious
+pattern. Two sets of trips make a full house (the lower trips act as the pair). Three pairs
+make two pair, and the kicker may come from the third pair. A straight and a flush in the same
+seven cards are a straight flush only if five suited cards are consecutive. The ace can be
+low (A-2-3-4-5), and then the five is the high card. Each of these is an explicit test.
+
+### Oracle testing
+When a fast, clever implementation is hard to trust, write a slow one that is obviously right
+and demand that both agree on a huge number of inputs. Here: all 21 five-card subsets versus
+bit masks and lookup tables, compared on a million random hands and on every 5-card hand.
+
+### Enumeration as a test
+There are exactly 2,598,960 five-card hands and 133,784,560 seven-card hands. Classify every
+one and compare the number in each category with the known combinatorial counts. If an edge
+case were mishandled, some count would be off.
+
+### Equity
+Your equity is the share of the pot you win on average if all remaining cards are dealt with
+no more betting: P(win) + P(tie) x (your share in a tie). Exactly: enumerate every possible
+remaining board. Approximately: sample boards (Monte Carlo) and report a standard error.
+
+### Range and card removal
+A range is the set of hands an opponent might hold, e.g. `TT+,AQs+` = pairs tens or better
+plus ace-queen and ace-king suited. Card removal (blockers): cards you can see cannot be in
+the opponent's hand, so holding an ace makes the opponent's AA combinations drop from 6 to 3.
+
+### Pot odds
+The price of a call compared with what you can win. If the pot (including the bet) is P and
+the call is C, calling breaks even when your equity is C / (P + C). EV of a call =
+equity x P - (1 - equity) x C. It is the same sum as "is this bet worth taking at these odds"
+in any trading question.

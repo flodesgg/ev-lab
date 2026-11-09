@@ -47,3 +47,8 @@ trainer:
   stats:
     weakest_window: 200     # last math answers used to rank my weakest categories
     weakest_min_answers: 5
+
+cards:
+  exact_limit: 5000000      # enumerate exactly up to this many (hands, board) scenarios;
+                            # above it `ev equity` uses Monte Carlo unless --exact is given
+  mc_trials: 200000

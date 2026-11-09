@@ -95,3 +95,26 @@ are recorded here too, with the test that now catches them.
   answers in that window are not ranked.
 - **D-026 Figures are small multiples** (one panel per category, shared axes, one line each)
   in two files, accuracy and speed, rather than eight lines in one chart or two y-axes.
+
+## Stage C (2026-11-09)
+
+- **D-027 Hand value = category x 13^5 + five base-13 tiebreaker digits.** One integer,
+  higher is better, identical in the oracle and the fast evaluator so they can be compared
+  with `==`.
+- **D-028 Fast evaluator = rank bit masks + 8192-entry tables, vectorised with numpy**
+  (`cards/fast.py`). No numba: about a million 7-card hands per second is enough, and the
+  code stays readable. It handles 5, 6 and 7 cards with the same code path.
+- **D-029 Enumerations use combinations in colex order** (`combinations_array`), where the
+  subsets of the first m cards are a prefix. All 7-card hands are produced as "two largest
+  cards + a prefix of the 5-subsets", so the 133,784,560 hands never exist in memory at once.
+- **D-030 Equity result types.** Exact enumeration returns Fractions (win, tie, equity);
+  Monte Carlo returns floats with a standard error. They are different types on purpose.
+- **D-031 Ranges are weighted equally per dealable combination.** In exact mode every
+  compatible assignment of hands is enumerated; in Monte Carlo hands are drawn uniformly
+  from each range and trials where two hands share a card are rejected, which gives the same
+  distribution.
+- **D-032 `ev equity` picks the method by size:** exact up to `cards.exact_limit` scenarios
+  (5,000,000; heads-up preflop is 1,712,304), otherwise Monte Carlo with the fixed seed,
+  unless `--exact` or `--mc N` is given.
+- **D-033 Pot odds convention:** `pot` includes the bet being faced; `call` is the amount to
+  add. EV(call) = equity x pot - (1 - equity) x call, relative to folding = 0.

@@ -13,7 +13,7 @@ It has three jobs:
 
 ## Status
 
-Stages 0, A and B are done; see [STATUS.md](STATUS.md) for the roadmap.
+Stages 0, A, B and C are done; see [STATUS.md](STATUS.md) for the roadmap.
 
 - **Exact toolkit** (`src/ev_lab/prob/`): finite distributions, absorbing Markov chains,
   optimal stopping by backward induction, exact polygon areas, a Monte Carlo checker.
@@ -24,6 +24,10 @@ Stages 0, A and B are done; see [STATUS.md](STATUS.md) for the roadmap.
   a probability quiz drawn from the puzzle library, and a "make me a market" game against a
   noise trader and an informed trader. Every answer is logged in `practice/`; my progress is
   in `reports/practice/` once I have practised.
+- **Cards** (`src/ev_lab/cards/`): a 7-card hand evaluator tested against a simple oracle
+  and against the known category counts of every 5-card and 7-card hand; Hold'em equity by
+  exact enumeration and by Monte Carlo; a range parser. Results:
+  [reports/cards/cards_check.md](reports/cards/cards_check.md).
 
 ## What this is not
 
@@ -45,6 +49,12 @@ uv run ev daily                       # the daily 10 minutes: math, one puzzle, 
 uv run ev stats                       # streak, weakest categories -> reports/practice/
 uv run ev math --preset sprint        # 80 questions in 8 minutes
 uv run ev market --quantity sum3      # one market game
+
+uv run ev equity AhKh QsQd            # exact: all 1,712,304 boards
+uv run ev equity AhKh QsQd --board 2c7d9h
+uv run ev equity AhKh "TT+,AQs+"      # hand vs range (Monte Carlo; --exact to enumerate)
+uv run ev pot-odds --pot 150 --call 50 --equity 0.33
+uv run ev cards-check --full          # evaluator + equity checks -> reports/cards/
 
 uv run ev puzzle list                 # what is there, and my status (no answers)
 uv run ev puzzle list --tag markov --difficulty 2
