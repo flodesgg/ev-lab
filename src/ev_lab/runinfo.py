@@ -8,7 +8,6 @@ from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 
-
 OUTPUT_DIRS = ("reports", "practice")
 
 
