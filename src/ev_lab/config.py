@@ -121,8 +121,13 @@ class CardsConfig(_Strict):
     mc_trials: int = Field(ge=1000)
 
 
+class GamesConfig(_Strict):
+    regret_iterations: int = Field(ge=100)
+    cfr_iterations: int = Field(ge=10)
+
+
 # Sections that change computed numbers (not paths or logging).
-RESULT_SECTIONS = ("random", "monte_carlo", "cards")
+RESULT_SECTIONS = ("random", "monte_carlo", "cards", "games")
 
 
 class Config(_Strict):
@@ -134,6 +139,7 @@ class Config(_Strict):
     puzzles: PuzzlesConfig
     trainer: TrainerConfig
     cards: CardsConfig
+    games: GamesConfig
 
     def results_hash(self) -> str:
         """Hash of everything that changes generated numbers. Two reports with the same

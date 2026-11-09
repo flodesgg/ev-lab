@@ -118,3 +118,24 @@ are recorded here too, with the test that now catches them.
   unless `--exact` or `--mc N` is given.
 - **D-033 Pot odds convention:** `pot` includes the bet being faced; `call` is the amount to
   add. EV(call) = equity x pot - (1 - equity) x call, relative to folding = 0.
+
+## Stage D (2026-11-09)
+
+- **D-034 LP solutions are certified in exact arithmetic.** scipy's `linprog` returns floats;
+  they are rationalised (`limit_denominator(10000)`) and then checked with Fractions: the row
+  strategy's guarantee must equal the column strategy's guarantee. Equality is a proof of
+  optimality (weak duality), so the reported value is exact. `certified=False` would mean the
+  rationalisation missed (a game whose solution needs larger denominators).
+- **D-035 Regret matching uses sampled actions** with a seeded generator. With expected
+  updates from a uniform start, rock-paper-scissors would never move and "converge" trivially.
+- **D-036 Kuhn best response by brute force** over the 64 pure strategies of a player:
+  obviously correct, and the game is tiny. All evaluation is in Fractions; CFR's float
+  strategies are converted exactly (a float is a binary fraction) before evaluation.
+- **D-037 Exploitability = (best-response gain of player 1 + of player 2) / 2**, i.e.
+  NashConv / 2, in chips per hand.
+- **D-038 The equilibrium family is encoded from a checked source and then proven by the
+  code:** for nine values of alpha the exact value is -1/18 and the exact exploitability is 0.
+  The CFR test then measures the distance of the learned strategy to the family member with
+  the learned alpha.
+- **D-039 Vanilla CFR with simultaneous updates,** full traversal of the six deals per
+  iteration, average strategy weighted by the player's own reach probability.

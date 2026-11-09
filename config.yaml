@@ -52,3 +52,7 @@ cards:
   exact_limit: 5000000      # enumerate exactly up to this many (hands, board) scenarios;
                             # above it `ev equity` uses Monte Carlo unless --exact is given
   mc_trials: 200000
+
+games:
+  regret_iterations: 100000   # regret-matching self-play rounds per matrix game
+  cfr_iterations: 100000      # vanilla CFR iterations on Kuhn poker

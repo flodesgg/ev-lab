@@ -164,3 +164,59 @@ The price of a call compared with what you can win. If the pot (including the be
 the call is C, calling breaks even when your equity is C / (P + C). EV of a call =
 equity x P - (1 - equity) x C. It is the same sum as "is this bet worth taking at these odds"
 in any trading question.
+
+## Stage D
+
+### Zero-sum game, mixed strategy, value
+In a zero-sum game one player's gain is the other's loss. A pure strategy is a single action;
+a mixed strategy is a probability distribution over actions (in rock-paper-scissors any pure
+strategy loses to its counter, so you must randomise). The minimax theorem says there is a
+number, the value of the game, that the row player can guarantee on average and that the
+column player can hold them to. It is found by linear programming (`games/matrix.py`).
+
+### Nash equilibrium
+A pair of strategies where neither player can gain by changing their own strategy alone. In a
+zero-sum game an equilibrium strategy is a "safe" strategy: it guarantees the value whatever
+the opponent does. It does not maximise profit against a bad opponent; it cannot be beaten.
+
+### The indifference principle
+If I mix between two actions at equilibrium, both must be worth the same to me, otherwise I
+would always take the better one. So the *opponent's* frequencies are set to make me
+indifferent. Betting P into a pot, with bet B:
+
+- the caller risks B to win P + B. If a fraction f of bets are bluffs, calling earns
+  f (P + B) - (1 - f) B. This is zero when **f = B / (P + 2B)**: the bluff share that makes
+  the caller indifferent;
+- a pure bluff risks B to win P. If the caller calls with probability c, the bluff earns
+  (1 - c) P - c B. This is zero when **c = P / (P + B)**: the calling frequency that makes
+  bluffing break even.
+
+Kuhn poker (P = 2, B = 1) uses exactly f = 1/4 and c = 2/3; a test checks it.
+
+### Why bluffing at the right frequency is optimal
+If I never bluff, the opponent folds whenever I bet and my strong hands earn nothing extra.
+If I bluff too often, the opponent calls everything and my bluffs lose. At the indifference
+frequency the opponent's best reply gains nothing, and my strong hands get paid. Bluffing is
+a way to get value for good hands.
+
+### Information set
+In a game with hidden cards a player cannot tell apart situations that differ only in what
+they cannot see. All such situations form one information set, and a strategy must do the
+same thing in all of them. Kuhn poker has 12: (my card) x (betting so far).
+
+### Regret and regret matching
+Regret of an action: how much more I would have earned so far had I always played it. Regret
+matching plays each action in proportion to its positive regret. When both players do this
+in a zero-sum game, their average strategies approach a Nash equilibrium.
+
+### Counterfactual regret minimisation (CFR)
+Regret matching at every information set simultaneously, where each regret is weighted by the
+probability that the *opponent and chance* bring the game to that point ("counterfactual":
+as if I had tried to get there). The average strategy converges to an equilibrium; the error
+shrinks roughly like 1 / sqrt(iterations).
+
+### Best response and exploitability
+A best response is the most profitable strategy against a fixed opponent strategy.
+Exploitability measures how far a strategy pair is from equilibrium: how much a
+best-responding opponent would win above the game value (here averaged over both seats). It is
+zero exactly at a Nash equilibrium, so it is the honest progress measure for a solver.

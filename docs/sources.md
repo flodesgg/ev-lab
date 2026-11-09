@@ -22,12 +22,19 @@ second, external confirmation.
 
 | Category counts of all 2,598,960 five-card hands and all 133,784,560 seven-card hands | `cards/reference.py`, `tests/test_cards.py` | Wikipedia, "Poker probability", https://en.wikipedia.org/wiki/Poker_probability | Both frequency tables, every row. The page lists royal flushes separately (4 and 4,324); added to the other straight flushes (36 and 37,260) they give 40 and 41,584. The totals match C(52,5) and C(52,7). |
 
+| Kuhn poker: rules, value -1/18 for the first player, the one-parameter equilibrium family | `games/kuhn.py` | Wikipedia, "Kuhn poker", https://en.wikipedia.org/wiki/Kuhn_poker (original: H. W. Kuhn, "Simplified Two-Person Poker", 1950, not opened) | Rules and payouts; player 1: bet the jack with alpha in [0, 1/3], the king with 3 alpha, always check the queen and call with it alpha + 1/3, fold the jack, call the king; player 2: king always bets/calls, queen checks and calls 1/3, jack never calls and bets 1/3; "lose at a rate of -1/18 per hand". The code then proves it: exact value -1/18 and exact exploitability 0 (`tests/test_games.py`). |
+
 Not taken from a source: the closed forms quoted in puzzle explanations (ballot theorem,
 gambler's ruin, a*b duration of a fair walk, gap symmetry). Each is tested against an
 independent computation in `tests/test_puzzles.py`.
 
+## Cited for the method only (no number is taken from them)
+
+- Zinkevich, Johanson, Bowling & Piccione (2007), "Regret Minimization in Games with
+  Incomplete Information": the CFR algorithm. Not opened; the implementation is validated by
+  its results (value, exploitability, equilibrium family), not by the paper.
+- Hart & Mas-Colell (2000): regret matching. Same remark.
+
 ## To be checked when first used
 
-- Stage D: the value of Kuhn poker and its one-parameter family of equilibria (Kuhn, 1950);
-  CFR (Zinkevich, Johanson, Bowling & Piccione, 2007).
 - Stage E: Kelly criterion (Kelly, 1956) and the continuous-time drawdown approximations.

@@ -13,7 +13,7 @@ It has three jobs:
 
 ## Status
 
-Stages 0, A, B and C are done; see [STATUS.md](STATUS.md) for the roadmap.
+Stages 0, A, B, C and D are done; see [STATUS.md](STATUS.md) for the roadmap.
 
 - **Exact toolkit** (`src/ev_lab/prob/`): finite distributions, absorbing Markov chains,
   optimal stopping by backward induction, exact polygon areas, a Monte Carlo checker.
@@ -28,6 +28,9 @@ Stages 0, A, B and C are done; see [STATUS.md](STATUS.md) for the roadmap.
   and against the known category counts of every 5-card and 7-card hand; Hold'em equity by
   exact enumeration and by Monte Carlo; a range parser. Results:
   [reports/cards/cards_check.md](reports/cards/cards_check.md).
+- **Game theory** (`src/ev_lab/games/`): zero-sum matrix games solved by linear programming
+  and certified exactly, regret matching, and vanilla CFR on Kuhn poker with best response
+  and exploitability. Results: [reports/games/games.md](reports/games/games.md).
 
 ## What this is not
 
@@ -55,6 +58,9 @@ uv run ev equity AhKh QsQd --board 2c7d9h
 uv run ev equity AhKh "TT+,AQs+"      # hand vs range (Monte Carlo; --exact to enumerate)
 uv run ev pot-odds --pot 150 --call 50 --equity 0.33
 uv run ev cards-check --full          # evaluator + equity checks -> reports/cards/
+
+uv run ev games                       # LP, regret matching, Kuhn CFR -> reports/games/
+uv run ev indifference --pot 2 --bet 1
 
 uv run ev puzzle list                 # what is there, and my status (no answers)
 uv run ev puzzle list --tag markov --difficulty 2

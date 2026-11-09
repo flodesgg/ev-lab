@@ -12,6 +12,8 @@ Commands
   stats               practice statistics -> reports/practice/
   equity H1 H2 ...    Hold'em equity of hands or ranges (exact or Monte Carlo)
   pot-odds            EV of a call from equity, pot and bet size
+  games               matrix games, regret matching, Kuhn CFR -> reports/games/
+  indifference        bluff share and calling frequency for a pot and a bet
   cards-check         evaluator and equity checks -> reports/cards/ (--full: all 7-card hands)
 """
 
@@ -25,6 +27,7 @@ import typer
 from ev_lab import __version__
 from ev_lab.cards.cli import register as register_cards
 from ev_lab.context import ConfigOption, start
+from ev_lab.games.cli import register as register_games
 from ev_lab.puzzles.cli import puzzle_app
 from ev_lab.trainer.cli import register as register_trainer
 
@@ -36,6 +39,7 @@ app = typer.Typer(
 app.add_typer(puzzle_app, name="puzzle")
 register_trainer(app)
 register_cards(app)
+register_games(app)
 
 
 def _version(value: bool) -> None:
