@@ -1,0 +1,24 @@
+# secrets (none are needed by this project; ignored anyway)
+.env
+.env.*
+
+# working data and logs
+/data/
+/logs/
+
+# python / tooling
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+*.egg-info/
+dist/
+build/
+
+# os / editor
+.DS_Store
+.vscode/
+.idea/

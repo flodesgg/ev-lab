@@ -1,0 +1,61 @@
+[project]
+name = "ev-lab"
+version = "0.1.0"
+description = "Offline lab for probability, game theory and bet sizing: exact answers checked by simulation, plus a daily interview trainer"
+readme = "README.md"
+authors = [
+    { name = "Nick", email = "119965654+flodesgg@users.noreply.github.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "matplotlib>=3.11.2",
+    "numpy>=2.5.4",
+    "pandas>=3.1.1",
+    "pydantic>=2.14.3",
+    "pyyaml>=6.0.3",
+    "rich>=15.0.0",
+    "scipy>=1.18.1",
+    "typer>=0.29.0",
+]
+
+[project.scripts]
+ev = "ev_lab.cli:main"
+
+[build-system]
+requires = ["uv_build>=0.12.18,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "hypothesis>=6.170.15",
+    "mypy>=2.4.1",
+    "pandas-stubs>=3.1.0.261029",
+    "pytest>=9.2.0",
+    "ruff>=0.17.4",
+    "scipy-stubs>=1.18.1.1",
+    "types-pyyaml>=6.0.12.20261103",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]
+
+[tool.ruff.lint.flake8-bugbear]
+# typer declares options as `x: T = typer.Option(...)` defaults
+extend-immutable-calls = ["typer.Option", "typer.Argument"]
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+plugins = ["pydantic.mypy"]
+files = ["src/ev_lab"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers -m 'not slow'"
+markers = [
+  "slow: long exhaustive checks (run with `make check-all`)",
+]

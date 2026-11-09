@@ -1,0 +1,27 @@
+# EV Lab configuration.
+# Validated at load time by src/ev_lab/config.py (pydantic, unknown keys rejected).
+# YAML pitfall: bare off / no / yes / on parse as booleans. Quote string values.
+# See docs/decisions.md for the reasoning behind each default.
+
+project:
+  name: "ev-lab"
+  offline_only: true        # must stay true; the loader refuses anything else
+
+paths:
+  practice: "practice"      # my answer logs (CSV, committed)
+  reports: "reports"        # generated reports and figures (committed, small)
+  logs: "logs"              # ignored
+  data: "data"              # ignored (caches, lookup tables)
+
+logging:
+  level: "INFO"
+  file: "ev_lab.log"
+  max_bytes: 5000000        # rotate at ~5 MB
+  backup_count: 5
+
+random:
+  seed: 20261109            # root seed; independent streams come from SeedSequence.spawn
+
+monte_carlo:
+  trials: 200000            # default number of trials for an exact-vs-simulation check
+  tolerance_se: 4.0         # a check passes when |exact - estimate| < tolerance_se * SE
