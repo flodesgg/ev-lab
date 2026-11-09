@@ -7,8 +7,10 @@ from fractions import Fraction
 from ev_lab.puzzles.base import Puzzle
 
 
-def parse_number(text: str) -> Fraction:
-    """'7/2', '3.5', '35%', '1,000' or ' 0.25 ' as an exact Fraction. ValueError otherwise."""
+def parse_number(text: str, percent_divides: bool = True) -> Fraction:
+    """'7/2', '3.5', '35%', '1,000' or ' 0.25 ' as an exact Fraction. ValueError otherwise.
+    A trailing % divides by 100 (35% -> 7/20) unless `percent_divides` is False, in which
+    case the sign is just dropped (for questions whose answer is itself a percentage)."""
     cleaned = text.strip().replace(",", "").replace("$", "").replace(" ", "")
     percent = cleaned.endswith("%")
     if percent:
@@ -17,7 +19,7 @@ def parse_number(text: str) -> Fraction:
         value = Fraction(cleaned)
     except (ValueError, ZeroDivisionError) as e:
         raise ValueError(f"not a number: {text!r} (use a fraction like 7/2 or a decimal)") from e
-    return value / 100 if percent else value
+    return value / 100 if percent and percent_divides else value
 
 
 def number_is_correct(answer: Fraction, exact: Fraction, rel_tolerance: float) -> bool:

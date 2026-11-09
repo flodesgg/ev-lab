@@ -13,13 +13,17 @@ It has three jobs:
 
 ## Status
 
-Stages 0 and A are done; see [STATUS.md](STATUS.md) for the roadmap.
+Stages 0, A and B are done; see [STATUS.md](STATUS.md) for the roadmap.
 
 - **Exact toolkit** (`src/ev_lab/prob/`): finite distributions, absorbing Markov chains,
   optimal stopping by backward induction, exact polygon areas, a Monte Carlo checker.
 - **Puzzle library** (`src/ev_lab/puzzles/`): classic interview puzzles, each with an exact
   solver, an independent simulator and an explanation. The count and the exact-vs-simulation
   table are in [reports/puzzles/check_all.md](reports/puzzles/check_all.md).
+- **Trainer** (`src/ev_lab/trainer/`): timed mental math with adaptive category selection,
+  a probability quiz drawn from the puzzle library, and a "make me a market" game against a
+  noise trader and an informed trader. Every answer is logged in `practice/`; my progress is
+  in `reports/practice/` once I have practised.
 
 ## What this is not
 
@@ -36,6 +40,11 @@ uv sync               # create the environment from the committed lockfile
 make check            # ruff, mypy --strict, pytest (fast set)
 make check-all        # the same plus slow exhaustive tests
 uv run ev check-config
+
+uv run ev daily                       # the daily 10 minutes: math, one puzzle, one market game
+uv run ev stats                       # streak, weakest categories -> reports/practice/
+uv run ev math --preset sprint        # 80 questions in 8 minutes
+uv run ev market --quantity sum3      # one market game
 
 uv run ev puzzle list                 # what is there, and my status (no answers)
 uv run ev puzzle list --tag markov --difficulty 2

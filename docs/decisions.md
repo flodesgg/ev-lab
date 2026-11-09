@@ -60,3 +60,38 @@ are recorded here too, with the test that now catches them.
   threshold is unique); St Petersburg capped at 2^10; ropes 10; max of 5 cards from 20.
 - **D-017 Practice logs are append-only** (`practice_log.py`): rows are only appended and the
   header is verified on every read and write.
+
+## Stage B (2026-11-09)
+
+- **D-018 Session randomness.** A practice session draws a fresh seed (written to
+  `logs/ev_lab.log`) so that questions differ every day; `--seed N` replays a session
+  exactly. Streams inside a session are named (`math`, `quiz`, `market`), see D-012.
+- **D-019 Adaptive rule for mental math** (`trainer/adaptive.py`). Per category, over its
+  last 50 answers (`trainer.math.adaptive_window`): accuracy = (correct + 1)/(answers + 2);
+  slowness = clip(category median seconds / overall median seconds - 1, 0, 1);
+  weight = 1 + 2 (1 - accuracy) + slowness, so between 1 and 4. A category is asked with
+  probability weight / sum of weights. A never-seen category has weight 2. Every category
+  keeps weight >= 1 so nothing drops out of practice.
+- **D-020 Timing.** The clock is checked when an answer arrives (terminal input cannot be
+  interrupted). An answer that arrives after the deadline is discarded and not logged.
+  Enter skips a question (logged as wrong); unreadable input is asked again while the clock
+  runs.
+- **D-021 Tolerances** (`trainer/mental_math.py`): exact for products, squares, sums and
+  percentage -> fraction; division within 0.01 (rounded or truncated to 2 decimals both
+  pass); fraction -> percentage within 0.1 points; percentage change within 0.1 (level 1)
+  or 0.5 (levels 2-3).
+- **D-022 Market game rules** (`trainer/market.py`). One trader per round: informed with
+  probability 0.5, otherwise noise. The informed trader sees the next component to be
+  revealed and trades one contract only if their fair value is outside my quote. Maximum
+  width per round = max(1, round(range of X x 0.20 / 0.12 / 0.08)). The trader's type is
+  shown only in the review after the game. Both random numbers of a round are always drawn,
+  so the deal and the trader types do not depend on what I quote.
+- **D-023 The review shows the exact expected P&L of each quote** (`expected_pnl`), not only
+  the realised P&L: the realised number is mostly luck, the expected one judges the quote.
+- **D-024 "heads in 10 tosses" is revealed in three groups** (tosses 1-4, 5-7, 8-10) to keep
+  every game at 2-3 rounds.
+- **D-025 Statistics use UTC days** and are computed from the three append-only logs only.
+  Weakest categories are ranked over the last 200 math answers, categories with fewer than 5
+  answers in that window are not ranked.
+- **D-026 Figures are small multiples** (one panel per category, shared axes, one line each)
+  in two files, accuracy and speed, rather than eight lines in one chart or two y-axes.

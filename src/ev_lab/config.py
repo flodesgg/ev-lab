@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Literal
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 DEFAULT_CONFIG_PATH = Path("config.yaml")
 
@@ -63,6 +63,59 @@ class PuzzlesConfig(_Strict):
     rel_tolerance: float = Field(gt=0, le=0.05)
 
 
+class MathPreset(_Strict):
+    questions: int = Field(ge=1, le=500)
+    minutes: float = Field(gt=0, le=60)
+
+
+class MathConfig(_Strict):
+    default_preset: str
+    level: Literal[1, 2, 3]
+    adaptive_window: int = Field(ge=5)
+    presets: dict[str, MathPreset] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def _default_exists(self) -> MathConfig:
+        if self.default_preset not in self.presets:
+            raise ValueError(f"default_preset {self.default_preset!r} is not in presets")
+        return self
+
+
+class MarketConfig(_Strict):
+    informed_prob: float = Field(ge=0, le=1)
+    width_fracs: list[float] = Field(min_length=1)
+    min_width: int = Field(ge=1)
+
+    @field_validator("width_fracs")
+    @classmethod
+    def _fractions_of_range(cls, v: list[float]) -> list[float]:
+        if any(not 0 < f <= 1 for f in v):
+            raise ValueError("width_fracs must lie in (0, 1]")
+        return v
+
+
+class DailyConfig(_Strict):
+    math_preset: str
+
+
+class StatsConfig(_Strict):
+    weakest_window: int = Field(ge=10)
+    weakest_min_answers: int = Field(ge=1)
+
+
+class TrainerConfig(_Strict):
+    math: MathConfig
+    market: MarketConfig
+    daily: DailyConfig
+    stats: StatsConfig
+
+    @model_validator(mode="after")
+    def _daily_preset_exists(self) -> TrainerConfig:
+        if self.daily.math_preset not in self.math.presets:
+            raise ValueError(f"daily.math_preset {self.daily.math_preset!r} is not in presets")
+        return self
+
+
 # Sections that change computed numbers (not paths or logging).
 RESULT_SECTIONS = ("random", "monte_carlo")
 
@@ -74,6 +127,7 @@ class Config(_Strict):
     random: RandomConfig
     monte_carlo: MonteCarloConfig
     puzzles: PuzzlesConfig
+    trainer: TrainerConfig
 
     def results_hash(self) -> str:
         """Hash of everything that changes generated numbers. Two reports with the same

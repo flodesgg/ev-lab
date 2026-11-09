@@ -28,3 +28,22 @@ monte_carlo:
 
 puzzles:
   rel_tolerance: 0.005      # a numeric answer is right when within 0.5% of the exact value
+
+trainer:
+  math:
+    default_preset: "warmup"
+    level: 2                # 1 = easy, 2 = interview pace, 3 = hard
+    adaptive_window: 50     # last answers per category used for the adaptive weights
+    presets:                # "N questions in M minutes"
+      sprint: {questions: 80, minutes: 8}   # format commonly reported for numerical tests
+      warmup: {questions: 40, minutes: 8}
+      daily: {questions: 40, minutes: 4}    # same pace as sprint, half the length
+  market:
+    informed_prob: 0.5      # chance that the trader who arrives is informed
+    width_fracs: [0.2, 0.12, 0.08]   # max quote width per round, as a share of X's range
+    min_width: 1
+  daily:
+    math_preset: "daily"
+  stats:
+    weakest_window: 200     # last math answers used to rank my weakest categories
+    weakest_min_answers: 5

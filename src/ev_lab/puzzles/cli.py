@@ -75,22 +75,13 @@ def _ask(prompt: str) -> tuple[Fraction, str]:
             console.print(f"[yellow]{e}[/yellow]")
 
 
-@puzzle_app.command("try")
-def try_(puzzle_id: str, config: Path = ConfigOption) -> None:
-    """Attempt a puzzle: statement, my answer, and only then the solution."""
-    ctx = start(config)
-    try:
-        puzzle = get_puzzle(puzzle_id)
-    except KeyError:
-        console.print(f"unknown puzzle {puzzle_id!r}; see: ev puzzle list")
-        raise typer.Exit(code=2) from None
-
+def attempt(puzzle: Puzzle, ctx: Context) -> bool:
+    """Show the statement, take my answer, log it, and only then reveal the solution."""
     console.print(
         Panel(puzzle.statement, title=f"{puzzle.title}  (difficulty {puzzle.difficulty})")
     )
     started = time.monotonic()
     if puzzle.kind == "market":
-        assert puzzle.max_width is not None
         bid, bid_text = _ask("Your bid")
         ask, ask_text = _ask("Your ask")
         answer_text = f"{bid_text} @ {ask_text}"
@@ -119,6 +110,19 @@ def try_(puzzle_id: str, config: Path = ConfigOption) -> None:
     console.print(
         f"Monte Carlo:  {mc.estimate:.5f} ± {mc.se:.5f} (SE), n = {mc.n:,}, z = {mc.z(exact):+.2f}"
     )
+    return correct
+
+
+@puzzle_app.command("try")
+def try_(puzzle_id: str, config: Path = ConfigOption) -> None:
+    """Attempt a puzzle: statement, my answer, and only then the solution."""
+    ctx = start(config)
+    try:
+        puzzle = get_puzzle(puzzle_id)
+    except KeyError:
+        console.print(f"unknown puzzle {puzzle_id!r}; see: ev puzzle list")
+        raise typer.Exit(code=2) from None
+    attempt(puzzle, ctx)
 
 
 @puzzle_app.command("check-all")

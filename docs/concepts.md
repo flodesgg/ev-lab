@@ -93,3 +93,33 @@ holds. In code the shaded polygon's area is computed exactly (`prob/geometry.py`
 When you quote a price, the people who trade with you are not random: someone who knows more
 trades only when your price is wrong in their favour. A wider quote is the protection. The
 market game in Stage B makes this concrete.
+
+## Stage B
+
+### Bid, ask, spread, making a market
+A market maker quotes two prices: the bid (where they buy) and the ask (where they sell). The
+difference is the spread. If buyers and sellers arrive at random, the market maker earns half
+the spread per trade on average. "Make me a market on X" in an interview means: give a bid and
+an ask around your estimate of X's fair value, and be ready to trade on either side.
+
+### Fair value as a conditional expectation
+The fair value of a contract that pays X is E[X | what is publicly known]. When a new piece of
+information arrives the fair value jumps, but before it arrives the expected jump is zero:
+fair values over time form a martingale. In the game, compare `fair value` across rounds.
+
+### Adverse selection
+A noise trader trades for reasons unrelated to the price; an informed trader trades only when
+your quote is wrong given what they know. So conditional on being traded with, your price was
+more likely wrong: buyers tend to appear when your ask is too low. The spread must cover this
+loss. In the game the "EV of my quote" column is exactly: half-spread earned from noise minus
+the loss to the informed trader.
+
+### Why the quote narrows as information arrives
+Early on the informed trader's knowledge is worth a lot (one die out of three is hidden from
+you but not from them), so a wide quote is needed. As components are revealed publicly, less
+can be known that you do not know, and competition forces tighter quotes.
+
+### Speed/accuracy trade-off and adaptive practice
+Timed numerical tests reward fast, correct answers and often penalise wrong ones. Practising
+what you are already good at feels productive but changes little; the trainer therefore asks
+weak and slow categories more often and reports accuracy per category, not only overall.

@@ -5,6 +5,11 @@ Commands
   puzzle list         list puzzles (never shows answers)
   puzzle try ID       attempt a puzzle: your answer first, then the solution
   puzzle check-all    exact vs Monte Carlo for every puzzle -> reports/puzzles/
+  daily               the daily 10 minutes: mental math, one puzzle, one market game
+  math                timed mental math (N questions in M minutes)
+  quiz                one probability puzzle, unseen or previously wrong first
+  market              make-me-a-market game with a noise and an informed trader
+  stats               practice statistics -> reports/practice/
 """
 
 from __future__ import annotations
@@ -17,6 +22,7 @@ import typer
 from ev_lab import __version__
 from ev_lab.context import ConfigOption, start
 from ev_lab.puzzles.cli import puzzle_app
+from ev_lab.trainer.cli import register as register_trainer
 
 app = typer.Typer(
     help="EV Lab: exact probability, game theory and bet sizing (offline study only).",
@@ -24,6 +30,7 @@ app = typer.Typer(
     add_completion=False,
 )
 app.add_typer(puzzle_app, name="puzzle")
+register_trainer(app)
 
 
 def _version(value: bool) -> None:
