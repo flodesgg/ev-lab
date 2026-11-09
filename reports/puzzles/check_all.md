@@ -5,7 +5,7 @@
 - A check passes when the exact answer is within 4 standard errors (SE) of the simulated mean. An error smaller than the SE cannot be detected this way.
 - The solver and the simulator are written separately, but by the same author from the same reading of the statement. A misread statement passes this check.
 - For conditional probabilities the simulator keeps only the trials where the condition happened, so `n` is smaller than the number of trials run.
-- With 29 checks at 4 SE, a false alarm is expected about once in several hundred runs. The seed is fixed, so a given commit and config always give the same table.
+- False alarms: for a correct answer P(|z| >= 4) is about 6.3e-05 (normal approximation), so with 29 checks about 1 run in 544 flags something that is fine. The seed is fixed, so a given commit and config always give the same table.
 
 ## Result
 
@@ -50,4 +50,4 @@
 | `rope_loops` | 3 | expected value, combinatorics | 200,000 | +1.23 | yes | hidden until attempted | hidden until attempted |
 
 ---
-_run 20261109T210426Z-44f3e0 · commit 2a58d9caf1f8 (dirty) · config 397bd215b8b2 · seed 20261109_
+_run 20261109T210751Z-f41f73 · commit 5ac8dfdcfc47 · config 397bd215b8b2 · seed 20261109_
