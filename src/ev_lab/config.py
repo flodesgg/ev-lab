@@ -59,6 +59,10 @@ class MonteCarloConfig(_Strict):
     tolerance_se: float = Field(gt=0, le=6)
 
 
+class PuzzlesConfig(_Strict):
+    rel_tolerance: float = Field(gt=0, le=0.05)
+
+
 # Sections that change computed numbers (not paths or logging).
 RESULT_SECTIONS = ("random", "monte_carlo")
 
@@ -69,6 +73,7 @@ class Config(_Strict):
     logging: LoggingConfig
     random: RandomConfig
     monte_carlo: MonteCarloConfig
+    puzzles: PuzzlesConfig
 
     def results_hash(self) -> str:
         """Hash of everything that changes generated numbers. Two reports with the same

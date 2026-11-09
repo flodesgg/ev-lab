@@ -25,3 +25,6 @@ random:
 monte_carlo:
   trials: 200000            # default number of trials for an exact-vs-simulation check
   tolerance_se: 4.0         # a check passes when |exact - estimate| < tolerance_se * SE
+
+puzzles:
+  rel_tolerance: 0.005      # a numeric answer is right when within 0.5% of the exact value

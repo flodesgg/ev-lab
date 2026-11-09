@@ -1,4 +1,1 @@
-"""Report generator: markdown and PNG.
-
-Built in Stage A; empty until then.
-"""
+"""Report generators: markdown (and, in later stages, PNG figures)."""

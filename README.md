@@ -13,8 +13,13 @@ It has three jobs:
 
 ## Status
 
-Stage 0 (skeleton) is done. Nothing mathematical is built yet; see [STATUS.md](STATUS.md)
-for the current step and the roadmap.
+Stages 0 and A are done; see [STATUS.md](STATUS.md) for the roadmap.
+
+- **Exact toolkit** (`src/ev_lab/prob/`): finite distributions, absorbing Markov chains,
+  optimal stopping by backward induction, exact polygon areas, a Monte Carlo checker.
+- **Puzzle library** (`src/ev_lab/puzzles/`): classic interview puzzles, each with an exact
+  solver, an independent simulator and an explanation. The count and the exact-vs-simulation
+  table are in [reports/puzzles/check_all.md](reports/puzzles/check_all.md).
 
 ## What this is not
 
@@ -31,7 +36,15 @@ uv sync               # create the environment from the committed lockfile
 make check            # ruff, mypy --strict, pytest (fast set)
 make check-all        # the same plus slow exhaustive tests
 uv run ev check-config
+
+uv run ev puzzle list                 # what is there, and my status (no answers)
+uv run ev puzzle list --tag markov --difficulty 2
+uv run ev puzzle try rolls_until_six  # statement -> my answer -> solution
+uv run ev puzzle check-all            # exact vs Monte Carlo -> reports/puzzles/check_all.md
 ```
+
+`ev puzzle try` always asks for an answer first. The check-all report hides the answer of
+every puzzle that has not been attempted yet.
 
 ## Layout
 
