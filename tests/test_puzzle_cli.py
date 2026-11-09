@@ -16,7 +16,7 @@ from ev_lab.prob.montecarlo import McResult
 from ev_lab.puzzles.grading import market_is_correct, number_is_correct, parse_number
 from ev_lab.puzzles.log import HEADER, attempts_by_puzzle
 from ev_lab.puzzles.registry import all_puzzles, get_puzzle
-from ev_lab.reports import puzzle_check
+from ev_lab.reports import puzzle_bias, puzzle_check
 from ev_lab.runinfo import RunInfo
 
 REPO = Path(__file__).resolve().parents[1]
@@ -228,3 +228,38 @@ def test_report_regression_against_stored_output() -> None:
     assert text == (REPO / "tests" / "expected" / "check_all.md").read_text()
     assert "**NO**" in text  # the deliberately wrong third row is flagged
     assert "2/3" not in text  # the unattempted row stays hidden
+
+
+# ---- ev puzzle bias-check --------------------------------------------------------------
+
+
+def test_bias_rows_flag_a_shifted_simulator_but_not_noise() -> None:
+    import numpy as np
+
+    rng = np.random.default_rng(0)
+    fair = puzzle_bias.BiasRow("fair", rng.normal(0.0, 1.0, 200).tolist())
+    shifted = puzzle_bias.BiasRow("shifted", rng.normal(0.6, 1.0, 200).tolist())
+    assert fair.ok() and abs(fair.mean_z) < 0.25 and 0.8 < fair.sd_z < 1.2
+    assert not shifted.ok()  # a bias of 0.6 SE per run is obvious over 200 seeds
+    assert shifted.standardised_mean == pytest.approx(shifted.mean_z * 200**0.5)
+
+
+def test_bias_check_command(workdir: Path) -> None:
+    result = runner.invoke(app, ["puzzle", "bias-check", "--seeds", "5"])
+    assert result.exit_code == 0, result.output
+    assert "0 flagged" in result.output
+    report = (workdir / "reports" / "puzzles" / "bias_check.md").read_text()
+    assert report.index("## Limitations") < report.index("## Result")
+    assert len([line for line in report.splitlines() if line.startswith("| `")]) == len(
+        all_puzzles()
+    )
+
+
+def test_bias_report_regression() -> None:
+    rows = [
+        puzzle_bias.BiasRow("monty_hall", [0.5, -0.5, 1.0, -1.0]),
+        puzzle_bias.BiasRow("penney_game", [2.5, 3.0, 2.0, 2.5]),
+    ]
+    text = puzzle_bias.render(rows, _fake_info(), seeds=4, trials=1000)
+    assert "**NO**" in text and "Largest: `penney_game` at +5.00" in text
+    assert text == (REPO / "tests" / "expected" / "bias_check.md").read_text()

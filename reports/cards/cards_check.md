@@ -54,4 +54,4 @@ Equity of the first hand. `z` = (Monte Carlo - exact) / SE.
 | AhKh vs TT+,AQs+ on 2c7d9h | 29,700 | 19301/59400 | 0.324933 | 0.32686 ± 0.00112 | +1.72 | yes |
 
 ---
-_run 20261109T214316Z-e733e4 · commit 6976d35df380 (dirty) · config e7ab25b87071 · seed 20261109_
+_run 20261109T215402Z-c873b1 · commit 4505a18a9fa7 · config e5861062b213 · seed 20261109_

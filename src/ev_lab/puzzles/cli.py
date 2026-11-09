@@ -22,7 +22,7 @@ from ev_lab.puzzles.grading import (
 )
 from ev_lab.puzzles.log import attempts_by_puzzle, log_attempt
 from ev_lab.puzzles.registry import all_puzzles, get_puzzle
-from ev_lab.reports import puzzle_check
+from ev_lab.reports import puzzle_bias, puzzle_check
 
 puzzle_app = typer.Typer(help="Probability and expected-value puzzles.", no_args_is_help=True)
 console = Console()
@@ -145,4 +145,31 @@ def check_all(config: Path = ConfigOption) -> None:
     )
     if failed:
         console.print(f"[red]disagree:[/red] {', '.join(failed)}")
+        raise typer.Exit(code=1)
+
+
+@puzzle_app.command("bias-check")
+def bias_check(
+    seeds: int = typer.Option(50, "--seeds", min=5, help="Independent seeds per puzzle."),
+    config: Path = ConfigOption,
+) -> None:
+    """Repeat exact-vs-simulation on many seeds; written to reports/puzzles/bias_check.md."""
+    ctx = start(config)
+    trials = ctx.cfg.monte_carlo.trials
+    rows = []
+    for p in all_puzzles():
+        exact = p.solve()
+        z_scores = [
+            run_mc(p.simulate, trials, rng_for(ctx.cfg.random.seed, f"bias:{p.id}:{k}")).z(exact)
+            for k in range(seeds)
+        ]
+        rows.append(puzzle_bias.BiasRow(p.id, z_scores))
+    path = puzzle_bias.write(
+        ctx.cfg.paths.reports / "puzzles", puzzle_bias.render(rows, ctx.info, seeds, trials)
+    )
+    failed = [r.puzzle_id for r in rows if not r.ok()]
+    ctx.logger.info("bias-check: %d puzzles, %d flagged", len(rows), len(failed))
+    console.print(f"{len(rows)} puzzles, {len(failed)} flagged as biased. Report: {path}")
+    if failed:
+        console.print(f"[red]flagged:[/red] {', '.join(failed)}")
         raise typer.Exit(code=1)

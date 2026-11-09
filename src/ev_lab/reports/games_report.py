@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 
 from ev_lab.games import kuhn
 from ev_lab.games.cfr import Checkpoint
+from ev_lab.games.indifference import bluff_share, calling_frequency
 from ev_lab.games.matrix import MatrixSolution
 from ev_lab.runinfo import RunInfo
 
@@ -51,6 +52,14 @@ class GamesReport:
 
 def _probs(p: Sequence[Fraction]) -> str:
     return "(" + ", ".join(str(v) for v in p) + ")"
+
+
+def _indifference_row(alpha: Fraction) -> str:
+    """The equilibrium's own frequencies, to compare with the indifference formulas."""
+    s = kuhn.equilibrium(alpha)
+    bluffs = s["J"] / (s["J"] + s["K"])  # jacks among player 1's bets (kings bet for value)
+    calls = (s["Qb"] + s["Kb"]) / 2  # player 2 holds Q or K equally often against a jack
+    return f"| {alpha} | {bluffs} | {calls} |"
 
 
 def _floats(p: Sequence[float]) -> str:
@@ -118,6 +127,16 @@ def render(r: GamesReport, info: RunInfo) -> str:
     for a, v, e in zip(r.family_alphas, r.family_values, r.family_exploitabilities, strict=True):
         lines.append(f"| {a} | {v} | {e} |")
     lines += [
+        "",
+        "## Indifference frequencies in Kuhn poker (exact)",
+        "",
+        f"Pot 2 (two antes), bet 1. Bluff share that makes a caller indifferent, B / (P + 2B): "
+        f"**{bluff_share(2, 1)}**. Calling frequency that makes a bluff break even, "
+        f"P / (P + B): **{calling_frequency(2, 1)}**.",
+        "",
+        "| alpha | bluffs in player 1's betting range | player 2 calls a jack's bluff |",
+        "|---|---|---|",
+        *[_indifference_row(a) for a in r.family_alphas if a > 0],
         "",
         "## Kuhn poker: CFR convergence (approximation)",
         "",

@@ -5,6 +5,7 @@ Commands
   puzzle list         list puzzles (never shows answers)
   puzzle try ID       attempt a puzzle: your answer first, then the solution
   puzzle check-all    exact vs Monte Carlo for every puzzle -> reports/puzzles/
+  puzzle bias-check   the same on many seeds: is any simulator biased?
   daily               the daily 10 minutes: mental math, one puzzle, one market game
   math                timed mental math (N questions in M minutes)
   quiz                one probability puzzle, unseen or previously wrong first

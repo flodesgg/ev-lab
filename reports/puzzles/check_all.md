@@ -50,4 +50,4 @@
 | `rope_loops` | 3 | expected value, combinatorics | 200,000 | +1.23 | yes | hidden until attempted | hidden until attempted |
 
 ---
-_run 20261109T210751Z-f41f73 · commit 5ac8dfdcfc47 · config 397bd215b8b2 · seed 20261109_
+_run 20261109T215346Z-203da9 · commit 4505a18a9fa7 · config e5861062b213 · seed 20261109_
