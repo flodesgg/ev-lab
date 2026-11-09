@@ -65,4 +65,4 @@ paper-lab reports a setup's expectancy with a bootstrap confidence interval. Tha
 Figures: `growth_curve.png`, `estimated_edge.png`.
 
 ---
-_run 20261109T215358Z-f1e68e · commit 4505a18a9fa7 · config e5861062b213 · seed 20261109_
+_run 20261109T220524Z-f1e9d4 · commit e63e0609f008 · config e5861062b213 · seed 20261109_

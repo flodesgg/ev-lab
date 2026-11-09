@@ -49,4 +49,4 @@
 For unbiased code: mean z near 0, sd near 1, and about 4.6% of runs beyond 2.
 
 ---
-_run 20261109T215910Z-f656c4 · commit ab81588b3155 (dirty) · config e5861062b213 · seed 20261109_
+_run 20261109T220254Z-9a8294 · commit e63e0609f008 · config e5861062b213 · seed 20261109_
