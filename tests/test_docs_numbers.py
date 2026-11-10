@@ -41,7 +41,7 @@ CLAIMS: list[tuple[str, str, str]] = [
     ("0.005333", LEDUC, "Vanilla CFR after 3,000 iterations: exploitability 0.005333"),
     ("-5/64", LEDUC, "| both players uniformly random | -0.078125000000 | -5/64"),
     ("288 information sets", LEDUC, "Size: 288 information sets by rank (936 when suits"),
-    ("seven-card hands in 1.4 s", CPP, "seven-card hands enumerated in C++ in 1.4 s"),
+    ("C++17 port", CPP, "C++ vs numpy evaluator on 1,000,000 random 7-card hands: 0 mismatches"),
     ("1/10", KELLY, "**f\\* = 1/10**"),
     ("75%", KELLY, "Half Kelly keeps 75% of the growth rate"),
     ("47.1% to 12.3%", KELLY, "drops from 47.1% to 12.3%"),

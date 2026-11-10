@@ -12,7 +12,7 @@
 - C++ vs Python oracle (all 21 five-card subsets) on 100,000 random 7-card hands: 0 mismatches.
 - C++ vs numpy evaluator on 1,000,000 random 7-card hands: 0 mismatches.
 - All 133,784,560 seven-card hands enumerated in C++ in 1.4 s.
-- Speed (7-card hands per second): C++ 83,797,712, numpy 3,672,413, ratio 23.
+- Speed (7-card hands per second): C++ 83,269,147, numpy 3,540,558, ratio 24.
 
 ## Category counts from C++ (exact enumeration)
 
@@ -29,4 +29,4 @@
 | high card | 1,302,540 | 1,302,540 | 23,294,460 | 23,294,460 | yes |
 
 ---
-_run 20261110T063013Z-06e5c5 · commit 008b4ed9a883 (dirty) · config 0a1d37906cc8 · seed 20261109_
+_run 20261110T063042Z-082319 · commit 655617a991f8 · config 0a1d37906cc8 · seed 20261109_
