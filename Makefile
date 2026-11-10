@@ -1,4 +1,4 @@
-.PHONY: check check-all lint typecheck test test-all fmt
+.PHONY: check check-all lint typecheck test test-all fmt cpp
 
 # fast set: must stay under a minute
 check: lint typecheck test
@@ -22,3 +22,8 @@ test-all:
 fmt:
 	uv run ruff format src tests
 	uv run ruff check --fix src tests
+
+# the C++ hand evaluator (also built on demand by the tests and by `ev cards-cpp`)
+cpp:
+	mkdir -p build
+	c++ -O2 -std=c++17 -Wall -Wextra -Wpedantic -Werror -o build/ev_eval cpp/main.cpp

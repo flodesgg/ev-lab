@@ -18,6 +18,7 @@ Commands
   indifference        bluff share and calling frequency for a pot and a bet
   kelly               Kelly growth, simulated bet sizes, estimated edge -> reports/kelly/
   kelly-bet           Kelly fraction for one bet
+  cards-cpp           build and check the C++ evaluator -> reports/cards/
   cards-check         evaluator and equity checks -> reports/cards/ (--full: all 7-card hands)
 """
 

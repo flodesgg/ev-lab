@@ -20,6 +20,7 @@ CARDS = "reports/cards/cards_check.md"
 GAMES = "reports/games/games.md"
 KELLY = "reports/kelly/kelly.md"
 LEDUC = "reports/games/leduc.md"
+CPP = "reports/cards/cpp_check.md"
 
 # (text as quoted in the docs, report that must contain `evidence`, evidence)
 CLAIMS: list[tuple[str, str, str]] = [
@@ -40,6 +41,7 @@ CLAIMS: list[tuple[str, str, str]] = [
     ("0.005333", LEDUC, "Vanilla CFR after 3,000 iterations: exploitability 0.005333"),
     ("-5/64", LEDUC, "| both players uniformly random | -0.078125000000 | -5/64"),
     ("288 information sets", LEDUC, "Size: 288 information sets by rank (936 when suits"),
+    ("seven-card hands in 1.4 s", CPP, "seven-card hands enumerated in C++ in 1.4 s"),
     ("1/10", KELLY, "**f\\* = 1/10**"),
     ("75%", KELLY, "Half Kelly keeps 75% of the growth rate"),
     ("47.1% to 12.3%", KELLY, "drops from 47.1% to 12.3%"),
@@ -78,13 +80,13 @@ def test_writeup_only_claims_extra_numbers_that_reports_contain() -> None:
 
 
 def test_every_report_puts_limitations_before_results() -> None:
-    for report in (PUZZLES, BIAS, CARDS, GAMES, KELLY, LEDUC):
+    for report in (PUZZLES, BIAS, CARDS, GAMES, KELLY, LEDUC, CPP):
         text = (REPO / report).read_text()
         assert text.index("## Limitations") < text.index("## Result"), report
 
 
 def test_reports_were_generated_from_committed_code() -> None:
-    for report in (PUZZLES, BIAS, CARDS, GAMES, KELLY, LEDUC):
+    for report in (PUZZLES, BIAS, CARDS, GAMES, KELLY, LEDUC, CPP):
         footer = (REPO / report).read_text().rstrip().splitlines()[-1]
         assert footer.startswith("_run ") and "seed " in footer, report
         assert "(dirty)" not in footer, f"{report} was generated from uncommitted code"

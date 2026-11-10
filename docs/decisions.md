@@ -221,3 +221,20 @@ are recorded here too, with the test that now catches them.
   through the slow evaluator and must earn exactly the claimed value. That it is the largest
   possible rests on the routine being a per-information-set maximum on a tree with perfect
   recall; the report states this limit.
+
+## Stage G, third option (2026-11-10): the evaluator in C++, chosen by Nick
+
+- **D-060 C++ and not Rust:** Apple clang is installed, Rust is not, and installing a
+  toolchain is Nick's call. C++17, one header (`cpp/evaluator.hpp`) and a small command-line
+  tool (`cpp/main.cpp`), compiled with `-O2 -Wall -Wextra -Wpedantic -Werror`.
+- **D-061 Same value encoding as Python,** so C++, numpy and the oracle are compared with
+  `==`. The C++ code is a port of the numpy evaluator's logic, not a new design.
+- **D-062 Python talks to the binary through text on stdin/stdout** (`cards/cpp.py`). No
+  extension module, no build system: the binary is rebuilt on demand when a source file is
+  newer. Slow for the bridge, irrelevant for the checks, and it keeps `uv sync` free of a
+  compiler requirement.
+- **D-063 The tests are skipped, with a stated reason, on a machine without a compiler.**
+  They are not silently passed. On this machine they run in the fast set, including the
+  enumeration of all 7-card hands (about a second and a half in C++).
+- **D-064 Speeds in the report are one measurement on one machine** and are labelled so. The
+  C++ number times evaluation only.

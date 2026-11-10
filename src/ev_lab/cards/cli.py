@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import time
 from pathlib import Path
 
 import numpy as np
@@ -9,6 +10,7 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
+from ev_lab.cards import cpp
 from ev_lab.cards.deck import cards_str, parse_cards
 from ev_lab.cards.equity import equity_exact, equity_mc, exact_scenarios
 from ev_lab.cards.evaluator import rank7_oracle
@@ -18,7 +20,7 @@ from ev_lab.cards.ranges import Combo, parse_range
 from ev_lab.context import ConfigOption, Context, start
 from ev_lab.prob.montecarlo import rng_for
 from ev_lab.puzzles.grading import parse_number
-from ev_lab.reports import cards_check
+from ev_lab.reports import cards_check, cpp_check
 
 console = Console()
 
@@ -74,7 +76,52 @@ def build_check(ctx: Context, full: bool) -> cards_check.CardsCheck:
     )
 
 
+CPP_NUMPY_SAMPLE = 1_000_000
+CPP_BENCH_HANDS = 20_000_000
+
+
+def build_cpp_check(ctx: Context) -> cpp_check.CppCheck:
+    rng = rng_for(ctx.cfg.random.seed, "cards-cpp")
+    hands = rng.permuted(np.tile(np.arange(52), (CPP_NUMPY_SAMPLE, 1)), axis=1)[:, :7]
+    started = time.perf_counter()
+    numpy_values = evaluate(hands)
+    numpy_seconds = time.perf_counter() - started
+    cpp_values = cpp.evaluate(hands)
+    sample = hands[:ORACLE_SAMPLE].tolist()
+    oracle = [rank7_oracle(h) for h in sample]
+    seven = cpp.category_counts(7)
+    return cpp_check.CppCheck(
+        five_counts=cpp.category_counts(5).counts,
+        seven_counts=seven.counts,
+        seven_seconds=seven.seconds,
+        oracle_hands=ORACLE_SAMPLE,
+        oracle_mismatches=sum(a != b for a, b in zip(cpp_values.tolist(), oracle, strict=False)),
+        numpy_hands=CPP_NUMPY_SAMPLE,
+        numpy_mismatches=int((cpp_values != numpy_values).sum()),
+        cpp_hands_per_second=cpp.benchmark(CPP_BENCH_HANDS),
+        numpy_hands_per_second=CPP_NUMPY_SAMPLE / numpy_seconds,
+    )
+
+
 def register(app: typer.Typer) -> None:
+    @app.command("cards-cpp")
+    def cards_cpp(config: Path = ConfigOption) -> None:
+        """Build the C++ evaluator and check it -> reports/cards/cpp_check.md."""
+        ctx = start(config)
+        try:
+            check = build_cpp_check(ctx)
+        except cpp.CppUnavailableError as e:
+            console.print(f"[red]error:[/red] {e}")
+            raise typer.Exit(code=2) from e
+        path = cpp_check.write(ctx.cfg.paths.reports / "cards", cpp_check.render(check, ctx.info))
+        console.print(
+            f"{'All checks pass' if check.ok() else 'A CHECK FAILED'}. C++ "
+            f"{check.cpp_hands_per_second:,.0f} hands/s. Report: {path}"
+        )
+        ctx.logger.info("cards-cpp ok=%s", check.ok())
+        if not check.ok():
+            raise typer.Exit(code=1)
+
     @app.command("cards-check")
     def cards_check_(
         full: bool = typer.Option(False, "--full", help="Also enumerate all 7-card hands (slow)."),
