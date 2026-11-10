@@ -28,6 +28,9 @@ second, external confirmation.
 
 | Algorithm SM-2: EF starts at 2.5; I(1) = 1, I(2) = 6, I(n) = I(n-1) x EF rounded up; EF' = EF + (0.1 - (5 - q)(0.08 + (5 - q) 0.02)), minimum 1.3; q < 3 restarts the intervals and leaves EF unchanged | `trainer/srs.py` | P. A. Wozniak, "Application of a computer to improve the results obtained in working with the SuperMemo method" (1990), algorithm page https://super-memory.com/english/ol/sm2.htm, checked 2026-11-10 | Every item of the numbered algorithm description: initial E-Factor, the three interval rules and the rounding, the update formula, the floor of 1.3, the meaning of grades 0 to 5, the reset rule for grades below 3. |
 
+| Leduc hold'em rules: 6 cards (two suits of J, Q, K), antes of 1, two rounds, raise amounts 2 and 4, two-bet maximum, one public card; 936 information states | `games/leduc.py` | OpenSpiel, `open_spiel/games/leduc_poker/leduc_poker.h` (header comment and `kNumInfoStates`), https://github.com/google-deepmind/open_spiel, checked 2026-11-10 | Deck, antes, rounds, raise amounts, the two-bet maximum and the constant 936, which `card_level_infoset_count()` reproduces. The header does not state the showdown rule. |
+| Leduc hold'em showdown: the player whose card matches the public card wins, otherwise the higher rank | `games/leduc.py` | RLCard documentation, "Games in RLCard", https://rlcard.org/games.html, checked 2026-11-10 (original: Southey et al., "Bayes' Bluff", 2005; the PDF was downloaded but could not be read here) | The showdown rule, and again the deck, the two-bet maximum and raise amounts 2 and 4. |
+
 Not taken from a source: the closed forms quoted in puzzle explanations (ballot theorem,
 gambler's ruin, a*b duration of a fair walk, gap symmetry), each tested against an
 independent computation in `tests/test_puzzles.py`; and the continuous-time drawdown formula
@@ -40,3 +43,5 @@ an approximation next to the simulation, never as a reference value.
   Incomplete Information": the CFR algorithm. Not opened; the implementation is validated by
   its results (value, exploitability, equilibrium family), not by the paper.
 - Hart & Mas-Colell (2000): regret matching. Same remark.
+- Tammelin (2014), "Solving Large Imperfect Information Games Using CFR+": the three
+  changes that make up CFR+. Not opened; validated by exploitability on Leduc hold'em.

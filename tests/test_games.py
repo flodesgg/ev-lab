@@ -354,7 +354,7 @@ def test_kuhn_equilibrium_uses_exactly_the_indifference_frequencies(alpha: F) ->
 @pytest.fixture
 def workdir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     raw = yaml.safe_load((REPO / "config.yaml").read_text())
-    raw["games"] = {"regret_iterations": 3000, "cfr_iterations": 500}
+    raw["games"] |= {"regret_iterations": 3000, "cfr_iterations": 500}
     (tmp_path / "config.yaml").write_text(yaml.safe_dump(raw))
     monkeypatch.chdir(tmp_path)
     monkeypatch.setenv("COLUMNS", "200")

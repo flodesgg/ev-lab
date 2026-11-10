@@ -198,3 +198,26 @@ are recorded here too, with the test that now catches them.
 - **D-053 Quiz order:** untried practice problems, then due reviews (most overdue first),
   then new puzzles, then the earliest future review. Before Stage G it was "unseen or
   previously wrong first"; a wrong answer now returns after one day instead of immediately.
+
+## Stage G, second option (2026-11-10): Leduc hold'em with CFR+, chosen by Nick
+
+- **D-054 Rules from two checked sources** (`docs/sources.md`): antes of 1, bets of 2 then 4,
+  at most two bets per round, a pair with the public card wins, otherwise the higher card.
+- **D-055 Information sets are keyed by rank, not by card** (288 instead of 936). Suits
+  never affect a payoff, so merging them loses nothing; the card-level count is computed
+  and tested because it is the number the source reports.
+- **D-056 Two implementations.** `games/leduc.py` deals the six actual cards and walks the
+  tree per deal: slow, plain, exact with Fractions. `games/leduc_cfr.py` walks the public
+  tree once with one vector entry per private rank and chance folded into weight matrices.
+  The fast one is tested against the slow one: random strategies, the uniform strategy
+  (exactly -5/64), the solver's average strategy, and each best-response policy.
+- **D-057 CFR+ = regret matching+ (regrets floored at zero), alternating updates, average
+  weighted by the iteration number.** Vanilla CFR here also alternates, with a uniform
+  average, so the figure isolates the other two changes.
+- **D-058 No reference game value is asserted.** I recall a value for Leduc but have not
+  found it in a source I could open, so tests check exploitability, agreement between the
+  two evaluators and the sign of the value, not a number from memory.
+- **D-059 The best response is validated as achievable, not as maximal:** its policy is run
+  through the slow evaluator and must earn exactly the claimed value. That it is the largest
+  possible rests on the routine being a per-information-set maximum on a tree with perfect
+  recall; the report states this limit.

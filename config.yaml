@@ -59,6 +59,7 @@ cards:
 games:
   regret_iterations: 100000   # regret-matching self-play rounds per matrix game
   cfr_iterations: 100000      # vanilla CFR iterations on Kuhn poker
+  leduc_iterations: 3000      # CFR+ and vanilla CFR iterations on Leduc hold'em
 
 kelly:
   p: 0.55                   # true win probability of the example bet

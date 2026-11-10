@@ -274,3 +274,20 @@ costs far fewer repetitions than reviewing everything every day. SM-2 keeps one 
 factor" per item: easy items get longer intervals, hard ones shorter, and a failure sends the
 item back to a one-day interval. Here the item is a puzzle and the grade is whether I solved
 it and how fast.
+
+### Public tree
+What everybody can see (the betting and the board card) forms a tree of its own. Instead of
+walking the game once for every possible deal, a solver can walk this public tree once and
+carry, for each player, a vector with one number per private hand. It is the same algorithm,
+organised so that the work is a few small matrix products. Real poker solvers work this way.
+
+### CFR+
+Three changes to CFR that make it converge much faster in practice: regrets are never allowed
+to become negative (so an action that was bad for a long time can come back quickly), the
+players are updated in turn, and later iterations weigh more in the average strategy. On
+Leduc hold'em the report shows the gap against vanilla CFR on the same game.
+
+### Validating a fast implementation with a slow one
+The fast solver uses weights and vectors that are easy to get subtly wrong. The slow evaluator
+deals real cards and follows the rules literally. If both give the same expected value for
+arbitrary strategies, the fast bookkeeping (chance weights, payoffs, who acts when) is right.

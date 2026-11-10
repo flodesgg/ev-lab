@@ -46,8 +46,8 @@ These come before the results on purpose.
   passes. Reference values from checked sources ([sources.md](sources.md)) reduce this for
   some results, not for all.
 - **A check at 4 standard errors cannot see an error smaller than the standard error.**
-- **Toy games.** Kuhn poker has 12 information sets. Nothing here shows that the methods
-  scale; real games need sampling and abstraction that are not built.
+- **Toy games.** Kuhn poker has 12 information sets and Leduc hold'em 288. Nothing here
+  shows that the methods scale; real games need sampling and abstraction that are not built.
 - **Equity is not strategy.** Equity assumes all cards are dealt with no further betting.
 - **The Kelly results are for one stylised bet**: known odds, independent outcomes, no
   costs, infinitely divisible wealth. The continuous-time drawdown formula is an
@@ -110,6 +110,14 @@ player and exploitability 0.000633; the learned strategy has alpha = 0.2200 and 
 0.0030 of the family member with that alpha
 ([reports/games/games.md](../reports/games/games.md)). Regret matching on two matrix games
 ends within 0.0050 and 0.0027 of the linear-programming solution (same file).
+
+**Leduc hold'em and CFR+.** A second, larger game is solved with CFR+ on the public tree.
+The fast solver is checked against a slow evaluator that deals the actual cards: both give
+-5/64 for two uniformly random players, and they agree on the solver's strategy and on what
+each best-response policy earns. After 3,000 iterations CFR+ has exploitability 0.000041;
+vanilla CFR on the same game has 0.005333
+([reports/games/leduc.md](../reports/games/leduc.md)). No reference game value is asserted
+(decision D-058).
 
 **Kelly.** The Kelly fraction is tested as the argmax of the growth rate on a fine grid. For
 p = 0.55 at even money it is 1/10, with growth 0.005008 per bet, and -0.000138 per bet at

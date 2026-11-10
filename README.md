@@ -16,6 +16,7 @@ method**, and never write down a number that a file in this repository did not p
 | Interview trainer | Timed mental math that asks my weak categories more often, a probability quiz with spaced repetition (SM-2), and a "make me a market" game against an informed trader | Question generators against an independent calculation; a stored scripted game | `reports/practice/` (after I practise) |
 | Hand evaluation and equity | A fast 7-card evaluator and exact Hold'em equity | A slow obvious evaluator as oracle; the category counts of all 2,598,960 five-card and all 133,784,560 seven-card hands | [reports/cards/cards_check.md](reports/cards/cards_check.md) |
 | Game theory | Matrix games by linear programming, regret matching, CFR on Kuhn poker | Exact optimality certificates; game value -1/18; exploitability 0.000633 after 100,000 iterations | [reports/games/games.md](reports/games/games.md) |
+| A larger game | CFR+ on Leduc hold'em (288 information sets) with an exact best response | A slow card-by-card evaluator; exploitability 0.000041 after 3,000 iterations | [reports/games/leduc.md](reports/games/leduc.md) |
 | Bet sizing | Kelly criterion, fractional Kelly, drawdowns, estimated edges | Simulation against the exact growth rate; exact binomial sums | [reports/kelly/kelly.md](reports/kelly/kelly.md) |
 
 Poker appears only as a mathematical object. This is offline study: no connection to any
@@ -55,6 +56,9 @@ Source: [reports/kelly/kelly.md](reports/kelly/kelly.md).
   against the exact -1/18, and the learned strategy is within 0.0030 of the equilibrium
   family. The family itself is proven by the code in exact arithmetic.
   ([reports/games/games.md](reports/games/games.md))
+- **CFR+ is far faster than vanilla CFR on a larger game**: on Leduc hold'em, after 3,000
+  iterations, exploitability 0.000041 against 0.005333.
+  ([reports/games/leduc.md](reports/games/leduc.md))
 - **Half Kelly keeps 75% of the growth rate** while the simulated chance of ever halving the
   bankroll drops from 47.1% to 12.3%.
   ([reports/kelly/kelly.md](reports/kelly/kelly.md))
@@ -94,6 +98,7 @@ uv run ev equity AhKh "TT+,AQs+"      # hand against a range
 uv run ev pot-odds --pot 150 --call 50 --equity 0.33
 uv run ev cards-check --full          # evaluator and equity checks -> reports/cards/
 uv run ev games                       # LP, regret matching, Kuhn CFR -> reports/games/
+uv run ev leduc                       # CFR+ vs vanilla CFR on Leduc hold'em -> reports/games/
 uv run ev indifference --pot 2 --bet 1
 uv run ev kelly                       # growth, simulations, estimated edge -> reports/kelly/
 uv run ev kelly-bet --p 0.55 --odds 1
@@ -110,7 +115,7 @@ src/ev_lab/
   puzzles/   one module per puzzle: statement, exact solver, simulator, explanation
   trainer/   mental math, adaptive weights, quiz with spaced repetition, market game, statistics
   cards/     deck, oracle and fast evaluators, equity, ranges, pot odds
-  games/     matrix games (LP), regret matching, Kuhn poker, CFR, indifference
+  games/     matrix games (LP), regret matching, Kuhn poker, CFR, Leduc hold'em with CFR+
   kelly/     Kelly fraction, path simulation, estimated edge
   reports/   report generators (markdown and PNG)
 tests/       one test module per area; tests/expected/ holds stored report outputs

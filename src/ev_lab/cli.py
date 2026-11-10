@@ -14,6 +14,7 @@ Commands
   equity H1 H2 ...    Hold'em equity of hands or ranges (exact or Monte Carlo)
   pot-odds            EV of a call from equity, pot and bet size
   games               matrix games, regret matching, Kuhn CFR -> reports/games/
+  leduc               CFR+ vs vanilla CFR on Leduc hold'em -> reports/games/
   indifference        bluff share and calling frequency for a pot and a bet
   kelly               Kelly growth, simulated bet sizes, estimated edge -> reports/kelly/
   kelly-bet           Kelly fraction for one bet

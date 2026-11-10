@@ -136,6 +136,7 @@ class CardsConfig(_Strict):
 class GamesConfig(_Strict):
     regret_iterations: int = Field(ge=100)
     cfr_iterations: int = Field(ge=10)
+    leduc_iterations: int = Field(ge=10)
 
 
 class KellyConfig(_Strict):
