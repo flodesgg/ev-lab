@@ -5,10 +5,6 @@ value, market making, game theory and bet sizing. Built by Nick, a second-year E
 Business Administration student, as a companion to `paper-lab` (a paper-only trading research
 lab).
 
-**How it was written.** The code, tests and reports were written by an AI coding agent
-exactness and honesty, and the checks every stage had to pass. I reviewed the results and
-made the design choices recorded in [docs/decisions.md](docs/decisions.md).
-
 The rule of the project: **compute the answer exactly, then check it with an independent
 method**, and never write down a number that a file in this repository did not produce.
 
