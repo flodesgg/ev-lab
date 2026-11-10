@@ -2,7 +2,7 @@
 
 ## Limitations (read first)
 
-- Leduc hold'em is still a toy: 6 cards and two betting rounds. It is about 24 times larger than Kuhn poker in information sets, not a step towards real poker sizes.
+- Leduc hold'em is still a toy: 6 cards and two betting rounds. It has 24 times the information sets of Kuhn poker (288 against 12), which is not a step towards real poker sizes.
 - The strategy is an approximation after a finite number of iterations. No exact equilibrium and no reference game value from a source is used; the evidence is the exploitability, computed by an exact best response.
 - The best-response routine and the solver share one tree. The cross-checks below run strategies through a second, slow evaluator that deals actual cards; they confirm values, and that each best response is achievable, not that it is the largest possible.
 - Exploitability here is the average of the two best-response gains (NashConv / 2), in chips per hand, with antes of 1.
@@ -46,4 +46,4 @@ Figure: `leduc_exploitability.png` (log-log).
 | 3,000 | 0.000041 | 0.005333 | -0.085605 |
 
 ---
-_run 20261110T060000Z-709c0b · commit f94a174f03b2 (dirty) · config 0a1d37906cc8 · seed 20261109_
+_run 20261110T060333Z-20d484 · commit 5321ef890a59 · config 0a1d37906cc8 · seed 20261109_
