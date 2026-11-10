@@ -264,3 +264,13 @@ Kelly, and for not sizing a position on an edge whose confidence interval includ
 To compare strategies by simulation, run all of them on the same random outcomes. The
 differences between them then come from the strategies and not from different luck, which
 removes most of the noise from the comparison.
+
+## Stage G
+
+### Spaced repetition
+Memory fades, but each successful recall makes it fade more slowly. Reviewing just before you
+would forget, at growing intervals (1 day, 6 days, then each interval multiplied by a factor),
+costs far fewer repetitions than reviewing everything every day. SM-2 keeps one "easiness
+factor" per item: easy items get longer intervals, hard ones shorter, and a failure sends the
+item back to a one-day interval. Here the item is a puzzle and the grade is whether I solved
+it and how fast.

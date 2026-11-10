@@ -44,6 +44,9 @@ trainer:
     min_width: 1
   daily:
     math_preset: "daily"
+  srs:                      # spaced repetition of puzzles (SM-2); grade from the attempt
+    fast_seconds: 60        # right within this time: grade 5
+    slow_seconds: 180       # right within this time: grade 4; slower: 3; wrong: 1
   stats:
     weakest_window: 200     # last math answers used to rank my weakest categories
     weakest_min_answers: 5

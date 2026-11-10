@@ -13,7 +13,7 @@ method**, and never write down a number that a file in this repository did not p
 | Part | What it does | How it was checked | Result file |
 |---|---|---|---|
 | Exact probability toolkit and 29 interview puzzles | Answers as fractions, by enumeration, Markov chains and backward induction | Every answer against an independent Monte Carlo simulation: 29 of 29 agree within 4 standard errors | [reports/puzzles/check_all.md](reports/puzzles/check_all.md) |
-| Interview trainer | Timed mental math that asks my weak categories more often, a probability quiz, and a "make me a market" game against an informed trader | Question generators against an independent calculation; a stored scripted game | `reports/practice/` (after I practise) |
+| Interview trainer | Timed mental math that asks my weak categories more often, a probability quiz with spaced repetition (SM-2), and a "make me a market" game against an informed trader | Question generators against an independent calculation; a stored scripted game | `reports/practice/` (after I practise) |
 | Hand evaluation and equity | A fast 7-card evaluator and exact Hold'em equity | A slow obvious evaluator as oracle; the category counts of all 2,598,960 five-card and all 133,784,560 seven-card hands | [reports/cards/cards_check.md](reports/cards/cards_check.md) |
 | Game theory | Matrix games by linear programming, regret matching, CFR on Kuhn poker | Exact optimality certificates; game value -1/18; exploitability 0.000633 after 100,000 iterations | [reports/games/games.md](reports/games/games.md) |
 | Bet sizing | Kelly criterion, fractional Kelly, drawdowns, estimated edges | Simulation against the exact growth rate; exact binomial sums | [reports/kelly/kelly.md](reports/kelly/kelly.md) |
@@ -83,7 +83,8 @@ uv run ev stats       # streak, weakest categories -> reports/practice/
 Everything else:
 
 ```bash
-uv run ev puzzle list                 # puzzles and my status (never shows answers)
+uv run ev quiz                        # one puzzle: due reviews first (spaced repetition)
+uv run ev puzzle list                 # puzzles, my status and review dates (never shows answers)
 uv run ev puzzle try rolls_until_six  # statement -> my answer -> solution
 uv run ev puzzle check-all            # exact vs Monte Carlo -> reports/puzzles/
 uv run ev math --preset sprint        # 80 questions in 8 minutes
@@ -107,7 +108,7 @@ answer of any puzzle I have not attempted.
 src/ev_lab/
   prob/      exact distributions, Markov chains, optimal stopping, polygon areas, MC checker
   puzzles/   one module per puzzle: statement, exact solver, simulator, explanation
-  trainer/   mental math, adaptive weights, quiz, market game, statistics
+  trainer/   mental math, adaptive weights, quiz with spaced repetition, market game, statistics
   cards/     deck, oracle and fast evaluators, equity, ranges, pot odds
   games/     matrix games (LP), regret matching, Kuhn poker, CFR, indifference
   kelly/     Kelly fraction, path simulation, estimated edge

@@ -26,6 +26,8 @@ second, external confirmation.
 
 | Kelly fraction f* = p - q/b and log growth p ln(1 + b f) + q ln(1 - f) | `kelly/core.py` | Wikipedia, "Kelly criterion", https://en.wikipedia.org/wiki/Kelly_criterion (original: J. L. Kelly, 1956, not opened) | The page gives f* = p/l - q/g and u = p log(1 + f g) + q log(1 - f l) with gain g and loss l; with l = 1 and g = b this is the formula used. Even money: "bets 2p - 1 times their initial wealth". The code checks that f* is the argmax of g on a fine grid. The page does **not** state the "twice Kelly gives zero growth" rule; that is computed here (exact g(2 f*) in the report). |
 
+| Algorithm SM-2: EF starts at 2.5; I(1) = 1, I(2) = 6, I(n) = I(n-1) x EF rounded up; EF' = EF + (0.1 - (5 - q)(0.08 + (5 - q) 0.02)), minimum 1.3; q < 3 restarts the intervals and leaves EF unchanged | `trainer/srs.py` | P. A. Wozniak, "Application of a computer to improve the results obtained in working with the SuperMemo method" (1990), algorithm page https://super-memory.com/english/ol/sm2.htm, checked 2026-11-10 | Every item of the numbered algorithm description: initial E-Factor, the three interval rules and the rounding, the update formula, the floor of 1.3, the meaning of grades 0 to 5, the reset rule for grades below 3. |
+
 Not taken from a source: the closed forms quoted in puzzle explanations (ballot theorem,
 gambler's ruin, a*b duration of a fair walk, gap symmetry), each tested against an
 independent computation in `tests/test_puzzles.py`; and the continuous-time drawdown formula

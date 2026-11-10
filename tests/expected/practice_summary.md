@@ -12,7 +12,7 @@
 
 - Streak: **4** day(s) in a row; 4 practice day(s) in total.
 - Mental math: 9 answers in 3 session(s).
-- Puzzles: 1 solved, 1 tried, of 29 (2 attempts).
+- Puzzles: 1 solved, 1 tried, of 29 (2 attempts); 1 review(s) due.
 - Market game: 1 game(s), total P&L -2.00; 1 of 2 quotes contained the fair value.
 
 ## Weakest categories (last 200 math answers)

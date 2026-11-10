@@ -51,6 +51,7 @@ class Summary:
     puzzles_tried: int
     puzzles_solved: int
     puzzle_attempts: int
+    reviews_due: int  # spaced-repetition reviews due today or earlier
     market_games: int
     market_rounds: int
     market_total_pnl: float
@@ -129,7 +130,12 @@ def streak(days: set[date], today: date) -> int:
 
 
 def summarise(
-    practice_dir: Path, today: date, window: int, min_answers: int, puzzles_total: int
+    practice_dir: Path,
+    today: date,
+    window: int,
+    min_answers: int,
+    puzzles_total: int,
+    reviews_due: int = 0,
 ) -> Summary:
     math, puzzles, market = (
         load_math(practice_dir),
@@ -154,6 +160,7 @@ def summarise(
         puzzles_tried=int(puzzles["puzzle_id"].nunique()),
         puzzles_solved=int(solved),
         puzzle_attempts=len(puzzles),
+        reviews_due=reviews_due,
         market_games=int(market["session_id"].nunique()) if len(market) else 0,
         market_rounds=len(market),
         market_total_pnl=float(market["pnl"].sum()),
@@ -184,7 +191,7 @@ def render_summary(s: Summary, info: RunInfo) -> str:
         f"- Streak: **{s.streak}** day(s) in a row; {s.practice_days} practice day(s) in total.",
         f"- Mental math: {s.math_answers} answers in {s.math_sessions} session(s).",
         f"- Puzzles: {s.puzzles_solved} solved, {s.puzzles_tried} tried, of {s.puzzles_total} "
-        f"({s.puzzle_attempts} attempts).",
+        f"({s.puzzle_attempts} attempts); {s.reviews_due} review(s) due.",
     ]
     if s.market_rounds:
         lines.append(

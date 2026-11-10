@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import csv
-from datetime import date
+from datetime import date, timedelta
 from fractions import Fraction as F
 from pathlib import Path
 
@@ -14,14 +14,13 @@ from typer.testing import CliRunner
 
 from ev_lab.cli import app
 from ev_lab.prob.montecarlo import rng_for
-from ev_lab.puzzles.log import Attempts
 from ev_lab.puzzles.registry import all_puzzles
 from ev_lab.runinfo import RunInfo
-from ev_lab.trainer import market_game, math_log, stats
+from ev_lab.trainer import market_game, math_log, srs, stats
 from ev_lab.trainer.adaptive import pick_category
 from ev_lab.trainer.market import QUANTITIES, MarketGame
 from ev_lab.trainer.mental_math import CATEGORIES, generate
-from ev_lab.trainer.quiz import pick_puzzle, priority
+from ev_lab.trainer.quiz import pick_puzzle
 
 REPO = Path(__file__).resolve().parents[1]
 runner = CliRunner()
@@ -48,23 +47,39 @@ def _rows(path: Path) -> list[dict[str, str]]:
 # ---- quiz selection --------------------------------------------------------------------
 
 
+def _card(due_in: int, today: date) -> srs.Card:
+    return srs.Card(2, F(5, 2), 6, today - timedelta(days=6 - due_in), 2)
+
+
 def test_quiz_priority_order() -> None:
     puzzles = all_puzzles()
-    pending = [p for p in puzzles if p.practice_pending]
+    today = date(2026, 11, 10)
     rng = np.random.default_rng(0)
-    # nothing tried: a practice problem comes first
-    assert pick_puzzle(puzzles, {}, rng).practice_pending
-    # practice problems tried and solved: now something never seen
-    done = {p.id: Attempts(1, True) for p in pending}
-    nxt = pick_puzzle(puzzles, done, rng)
-    assert nxt.id not in done
-    # everything seen, one unsolved: that one
-    seen = {p.id: Attempts(1, True) for p in puzzles}
-    seen["penney_game"] = Attempts(3, False)
-    assert pick_puzzle(puzzles, seen, rng).id == "penney_game"
-    # everything solved: revision still returns a puzzle
-    assert pick_puzzle(puzzles, {p.id: Attempts(1, True) for p in puzzles}, rng) in puzzles
-    assert [priority(pending[0], {}), priority(nxt, {}), priority(nxt, seen)] == [0, 1, 3]
+    pending = {p.id for p in puzzles if p.practice_pending}
+    # 1. nothing tried: a practice problem comes first
+    chosen, reason = pick_puzzle(puzzles, {}, today, rng)
+    assert chosen.practice_pending and "practice" in reason
+    # 2. practice problems done, one review overdue by 3 days and one by 1: the older one
+    schedule = {pid: _card(5, today) for pid in pending}
+    schedule |= {"monty_hall": _card(-3, today), "penney_game": _card(-1, today)}
+    chosen, reason = pick_puzzle(puzzles, schedule, today, rng)
+    assert chosen.id == "monty_hall" and reason == "review, due 3 d ago"
+    # a review due exactly today counts as due
+    chosen, reason = pick_puzzle(
+        puzzles,
+        {**schedule, "monty_hall": _card(0, today), "penney_game": _card(2, today)},
+        today,
+        rng,
+    )
+    assert chosen.id == "monty_hall" and reason == "review, due today"
+    # 3. nothing due: a puzzle never seen
+    calm = {pid: _card(5, today) for pid in schedule}
+    chosen, reason = pick_puzzle(puzzles, calm, today, rng)
+    assert chosen.id not in calm and reason == "new puzzle"
+    # 4. everything seen, nothing due: the earliest review
+    everything = {p.id: _card(9, today) for p in puzzles} | {"rope_loops": _card(2, today)}
+    chosen, reason = pick_puzzle(puzzles, everything, today, rng)
+    assert chosen.id == "rope_loops" and "nothing is due" in reason and "due in 2 d" in reason
 
 
 # ---- commands --------------------------------------------------------------------------
@@ -150,13 +165,14 @@ def test_market_command_abandoned_game_logs_nothing(workdir: Path) -> None:
 
 
 def test_daily_runs_all_three_parts_and_stats_reports_them(workdir: Path) -> None:
-    puzzle = pick_puzzle(all_puzzles(), {}, rng_for(SEED, "quiz"))
+    puzzle, _ = pick_puzzle(all_puzzles(), {}, date(2026, 1, 1), rng_for(SEED, "quiz"))
     puzzle_lines = ["1", "2"] if puzzle.kind == "market" else ["1/7"]
     lines = ["", *_math_answers(3), *puzzle_lines, *_market_inputs()]
     result = runner.invoke(app, ["daily", "--seed", str(SEED)], input="\n".join(lines) + "\n")
     assert result.exit_code == 0, result.output
     out = result.output
     assert out.index("1/3") < out.index("2/3") < out.index("3/3") < out.index("Done for today")
+    assert "Chosen: practice problem, not tried yet" in out and "Next review of this puzzle" in out
     practice = workdir / "practice"
     assert len(_rows(practice / "math_log.csv")) == 3
     assert [r["puzzle_id"] for r in _rows(practice / "puzzle_log.csv")] == [puzzle.id]
@@ -262,7 +278,12 @@ def _write_history(practice: Path) -> None:
 def test_summary_numbers_by_hand(tmp_path: Path) -> None:
     _write_history(tmp_path / "practice")
     s = stats.summarise(
-        tmp_path / "practice", date(2026, 11, 6), window=200, min_answers=2, puzzles_total=29
+        tmp_path / "practice",
+        date(2026, 11, 6),
+        window=200,
+        min_answers=2,
+        puzzles_total=29,
+        reviews_due=1,
     )
     assert (s.streak, s.practice_days) == (4, 4)
     assert (s.math_answers, s.math_sessions) == (9, 3)
@@ -277,6 +298,7 @@ def test_summary_numbers_by_hand(tmp_path: Path) -> None:
     # weakest: mul_2x2 (0%), then division (33%), then squares (75%)
     assert [c.category for c in s.weakest] == ["mul_2x2", "division", "squares"]
     assert (s.puzzles_tried, s.puzzles_solved, s.puzzle_attempts) == (1, 1, 2)
+    assert s.reviews_due == 1
     assert (s.market_games, s.market_rounds, s.market_total_pnl) == (1, 2, -2.0)
     assert s.market_quotes_containing_fair == 1  # 4.47 is inside 4 @ 5; 6 is not
 
@@ -304,7 +326,12 @@ def test_summary_report_regression(tmp_path: Path) -> None:
     """Fixed logs must render exactly the stored summary."""
     _write_history(tmp_path / "practice")
     s = stats.summarise(
-        tmp_path / "practice", date(2026, 11, 6), window=200, min_answers=2, puzzles_total=29
+        tmp_path / "practice",
+        date(2026, 11, 6),
+        window=200,
+        min_answers=2,
+        puzzles_total=29,
+        reviews_due=1,
     )
     info = RunInfo(
         "20260101T000000Z-abcdef",

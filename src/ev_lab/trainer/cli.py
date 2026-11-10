@@ -13,9 +13,8 @@ import typer
 from ev_lab.context import ConfigOption, Context, start
 from ev_lab.prob.montecarlo import rng_for
 from ev_lab.puzzles.cli import attempt
-from ev_lab.puzzles.log import attempts_by_puzzle
 from ev_lab.puzzles.registry import all_puzzles
-from ev_lab.trainer import market_game, math_log, stats
+from ev_lab.trainer import market_game, math_log, srs, stats
 from ev_lab.trainer.adaptive import category_weights
 from ev_lab.trainer.io import ConsoleIO
 from ev_lab.trainer.market import QUANTITIES, MarketGame
@@ -70,9 +69,18 @@ def _math(ctx: Context, io: ConsoleIO, seed: int, preset: str, level: int | None
     return summary
 
 
-def _quiz(ctx: Context, seed: int) -> None:
-    attempts = attempts_by_puzzle(ctx.cfg.paths.practice)
-    attempt(pick_puzzle(all_puzzles(), attempts, rng_for(seed, "quiz")), ctx)
+def _schedule(ctx: Context) -> dict[str, srs.Card]:
+    cfg = ctx.cfg.trainer.srs
+    return srs.load_schedule(ctx.cfg.paths.practice, cfg.fast_seconds, cfg.slow_seconds)
+
+
+def _quiz(ctx: Context, io: ConsoleIO, seed: int) -> None:
+    today = datetime.now(UTC).date()
+    puzzle, reason = pick_puzzle(all_puzzles(), _schedule(ctx), today, rng_for(seed, "quiz"))
+    io.say(f"[dim]Chosen: {reason}.[/dim]")
+    attempt(puzzle, ctx)
+    card = _schedule(ctx)[puzzle.id]
+    io.say(f"Next review of this puzzle: {card.due.isoformat()} (in {card.interval_days} d).")
 
 
 def _market(ctx: Context, io: ConsoleIO, seed: int, quantity: str | None) -> None:
@@ -114,7 +122,7 @@ def register(app: typer.Typer) -> None:
     def quiz(seed: int | None = SeedOption, config: Path = ConfigOption) -> None:
         """One probability puzzle: unseen or previously wrong first."""
         ctx = start(config)
-        _quiz(ctx, _seed(ctx, seed))
+        _quiz(ctx, ConsoleIO(), _seed(ctx, seed))
 
     @app.command("market")
     def market(
@@ -135,7 +143,7 @@ def register(app: typer.Typer) -> None:
         io.say("[bold]Daily session[/bold] 1/3")
         _math(ctx, io, chosen, ctx.cfg.trainer.daily.math_preset, None)
         io.say("\n[bold]Daily session[/bold] 2/3: one puzzle")
-        _quiz(ctx, chosen)
+        _quiz(ctx, io, chosen)
         io.say("\n[bold]Daily session[/bold] 3/3")
         _market(ctx, io, chosen, None)
         io.say("\nDone for today. Progress: ev stats")
@@ -147,12 +155,10 @@ def register(app: typer.Typer) -> None:
         io = ConsoleIO()
         cfg = ctx.cfg.trainer.stats
         practice = ctx.cfg.paths.practice
+        today = datetime.now(UTC).date()
+        due = sum(c.days_overdue(today) >= 0 for c in _schedule(ctx).values())
         summary = stats.summarise(
-            practice,
-            datetime.now(UTC).date(),
-            cfg.weakest_window,
-            cfg.weakest_min_answers,
-            len(all_puzzles()),
+            practice, today, cfg.weakest_window, cfg.weakest_min_answers, len(all_puzzles()), due
         )
         if summary.practice_days == 0:
             io.say("No practice logged yet. Start with: ev daily")
@@ -162,8 +168,8 @@ def register(app: typer.Typer) -> None:
         )
         io.say(
             f"Streak: {summary.streak} day(s). Math answers: {summary.math_answers}. Puzzles "
-            f"solved: {summary.puzzles_solved}/{summary.puzzles_total}. Market games: "
-            f"{summary.market_games}."
+            f"solved: {summary.puzzles_solved}/{summary.puzzles_total} "
+            f"({summary.reviews_due} review(s) due). Market games: {summary.market_games}."
         )
         if summary.weakest:
             io.say("Weakest categories:")

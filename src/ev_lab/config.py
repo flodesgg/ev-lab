@@ -98,6 +98,17 @@ class DailyConfig(_Strict):
     math_preset: str
 
 
+class SrsConfig(_Strict):
+    fast_seconds: float = Field(gt=0)
+    slow_seconds: float = Field(gt=0)
+
+    @model_validator(mode="after")
+    def _fast_before_slow(self) -> SrsConfig:
+        if self.fast_seconds >= self.slow_seconds:
+            raise ValueError("srs.fast_seconds must be below srs.slow_seconds")
+        return self
+
+
 class StatsConfig(_Strict):
     weakest_window: int = Field(ge=10)
     weakest_min_answers: int = Field(ge=1)
@@ -107,6 +118,7 @@ class TrainerConfig(_Strict):
     math: MathConfig
     market: MarketConfig
     daily: DailyConfig
+    srs: SrsConfig
     stats: StatsConfig
 
     @model_validator(mode="after")

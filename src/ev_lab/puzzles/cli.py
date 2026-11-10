@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import time
+from datetime import UTC, datetime
 from fractions import Fraction
 from pathlib import Path
 
@@ -23,6 +24,7 @@ from ev_lab.puzzles.grading import (
 from ev_lab.puzzles.log import attempts_by_puzzle, log_attempt
 from ev_lab.puzzles.registry import all_puzzles, get_puzzle
 from ev_lab.reports import puzzle_bias, puzzle_check
+from ev_lab.trainer import srs
 
 puzzle_app = typer.Typer(help="Probability and expected-value puzzles.", no_args_is_help=True)
 console = Console()
@@ -46,6 +48,10 @@ def list_(
         console.print(f"unknown tag {tag!r}; tags: {', '.join(TAGS)}")
         raise typer.Exit(code=2)
     attempts = attempts_by_puzzle(ctx.cfg.paths.practice)
+    today = datetime.now(UTC).date()
+    schedule = srs.load_schedule(
+        ctx.cfg.paths.practice, ctx.cfg.trainer.srs.fast_seconds, ctx.cfg.trainer.srs.slow_seconds
+    )
     table = Table(title="Puzzles")
     for column in ("id", "title", "diff", "tags", "status"):
         table.add_column(column)
@@ -60,6 +66,7 @@ def list_(
             status = "practice: to do" if p.practice_pending else "new"
         else:
             status = f"solved ({a.count} tries)" if a.solved else f"not yet ({a.count} tries)"
+            status += f", {srs.due_text(schedule[p.id], today)}"
         table.add_row(p.id, p.title, str(p.difficulty), ", ".join(p.tags), status)
         shown += 1
     console.print(table)

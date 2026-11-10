@@ -179,3 +179,22 @@ are recorded here too, with the test that now catches them.
 - **D-048 No practice figure in the README yet.** The build prompt asks for a figure of my
   practice progress. No real session has been logged, and a figure from synthetic data
   would be a fabricated result, so the README says where the figure will appear instead.
+
+## Stage G (2026-11-10): spaced repetition, chosen by Nick
+
+- **D-049 Stage G = spaced repetition (SM-2) for puzzles** (Nick's choice out of the four
+  options in the build prompt).
+- **D-050 The schedule is recomputed from `practice/puzzle_log.csv` on every use.** There is
+  no schedule file, so the schedule cannot drift from the history and the log stays the only
+  state. Review days are UTC days.
+- **D-051 The grade comes from the attempt, not from self-assessment:** wrong = 1; right
+  within 60 s = 5, within 180 s = 4, slower = 3 (`trainer.srs`). SM-2's grades 0 and 2 are
+  not used.
+- **D-052 Reading of SM-2 where the source leaves room:** the easiness factor is updated
+  first and the new value sets the next interval; fractional intervals are rounded up; a
+  failed review resets the interval sequence and leaves the easiness factor unchanged (all
+  three as in the source text). SM-2's last step (repeat failed items the same day until
+  graded 4 or better) is not enforced: a failed puzzle is simply due the next day.
+- **D-053 Quiz order:** untried practice problems, then due reviews (most overdue first),
+  then new puzzles, then the earliest future review. Before Stage G it was "unseen or
+  previously wrong first"; a wrong answer now returns after one day instead of immediately.
