@@ -5,6 +5,10 @@ value, market making, game theory and bet sizing. Built by Nick, a second-year E
 Business Administration student, as a companion to `paper-lab` (a paper-only trading research
 lab).
 
+**How it was written.** The code, tests and reports were written by an AI coding agent
+exactness and honesty, and the checks every stage had to pass. I reviewed the results and
+made the design choices recorded in [docs/decisions.md](docs/decisions.md).
+
 The rule of the project: **compute the answer exactly, then check it with an independent
 method**, and never write down a number that a file in this repository did not produce.
 
@@ -23,6 +27,19 @@ method**, and never write down a number that a file in this repository did not p
 Poker appears only as a mathematical object. This is offline study: no connection to any
 gambling site, no bots, no real-time assistance, no scraping, no credentials. `config.yaml`
 carries `offline_only: true` and the loader refuses any other value.
+
+## Limitations
+
+- The solver and the simulator of each check come from the same reading of a problem: a
+  misread statement passes both. A check at 4 standard errors cannot see an error smaller
+  than the standard error.
+- Kuhn poker and Leduc hold'em are toy games. Nothing here shows that the methods scale to
+  real poker, which needs sampling and abstraction that are not built.
+- The Kelly results are for one stylised bet (known odds, independent outcomes, no costs).
+- No real practice session has been logged yet, so nothing here claims anything about my own
+  speed or accuracy.
+- The web page is tested at the server level only; its rendering was checked by hand.
+- C++ speeds are single measurements on one laptop and are not quoted as results.
 
 ## Three figures
 
@@ -137,3 +154,7 @@ docs/        writeup.md, interview_prep.md, concepts.md, decisions.md, sources.m
 - Randomness only through `numpy.random.Generator` with explicit, named seeds.
 - Reference values come from a checked source ([docs/sources.md](docs/sources.md)) or from a
   second computation, never from memory.
+
+## License
+
+MIT, see [LICENSE](LICENSE).

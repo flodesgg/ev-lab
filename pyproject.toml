@@ -3,6 +3,8 @@ name = "ev-lab"
 version = "0.1.0"
 description = "Offline lab for probability, game theory and bet sizing: exact answers checked by simulation, plus a daily interview trainer"
 readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [
     { name = "Nick", email = "119965654+flodesgg@users.noreply.github.com" }
 ]

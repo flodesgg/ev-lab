@@ -1,10 +1,16 @@
 # secrets (none are needed by this project; ignored anyway)
 .env
 .env.*
+*.pem
+*.key
+secrets.*
 
-# working data and logs
+# working data and logs (this project uses no third-party data; anything downloaded
+# would go to data/ and stays out of git)
 /data/
 /logs/
+*.sqlite
+*.db
 
 # python / tooling
 .venv/

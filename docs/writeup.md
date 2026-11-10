@@ -153,9 +153,9 @@ sampling.
 
 ## 6. What I would do next
 
-Log real practice sessions and report my own numbers honestly; solve a larger game (Leduc
-hold'em) with a sampling variant of CFR; port the evaluator to a compiled language with the
-Python oracle as its test.
+Log real practice sessions and report my own numbers honestly. Leduc hold'em (with CFR+) and
+a C++ port of the evaluator, both listed here earlier, are now built; see the README. Next
+would be a sampling variant of CFR (Monte Carlo CFR) on a game too large to traverse fully.
 
 ## 7. One line for a CV
 
