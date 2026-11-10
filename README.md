@@ -139,7 +139,7 @@ cpp/         the hand evaluator in C++17 (header + command-line tool)
 tests/       one test module per area; tests/expected/ holds stored report outputs
 practice/    my answer logs (append-only CSV)
 reports/     generated reports and figures
-docs/        writeup.md, interview_prep.md, concepts.md, decisions.md, sources.md
+docs/        writeup.md, concepts.md, decisions.md, sources.md
 ```
 
 ## Conventions

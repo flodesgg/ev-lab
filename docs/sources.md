@@ -9,7 +9,7 @@ Format: value · where it is used · source · date checked · what exactly was 
 ## Checked sources
 
 All opened and read on 2026-11-09. Each value is also computed by this repo's code
-(`tests/test_puzzles.py::test_reference_values_from_the_build_prompt`); the source is a
+(`tests/test_puzzles.py::test_reference_values_from_the_specification`); the source is a
 second, external confirmation.
 
 | value | used in | source | what was checked |

@@ -111,7 +111,7 @@ def test_simulators_are_reproducible() -> None:
 # ---- reference values (docs/sources.md) ------------------------------------------------
 
 
-def test_reference_values_from_the_build_prompt() -> None:
+def test_reference_values_from_the_specification() -> None:
     assert rolls_until_six.solve() == 6
     harmonic_6 = sum((F(1, k) for k in range(1, 7)), F(0))
     assert coupon_collector_die.solve() == 6 * harmonic_6 == F(147, 10)

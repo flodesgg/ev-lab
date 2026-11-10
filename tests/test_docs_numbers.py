@@ -48,7 +48,7 @@ CLAIMS: list[tuple[str, str, str]] = [
     ("n = 10, 20, 50", KELLY, "expected growth for n = 10, 20, 50 past bets"),
 ]
 
-DOCS = ["README.md", "docs/writeup.md", "docs/interview_prep.md"]
+DOCS = ["README.md", "docs/writeup.md"]
 
 
 @pytest.mark.parametrize(("quoted", "report", "evidence"), CLAIMS)

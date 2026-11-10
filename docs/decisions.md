@@ -176,14 +176,14 @@ are recorded here too, with the test that now catches them.
   quoted in README, the write-up and the interview notes must occur in the report it cites,
   reports must have been generated from committed code, and limitations must precede
   results.
-- **D-048 No practice figure in the README yet.** The build prompt asks for a figure of my
+- **D-048 No practice figure in the README yet.** The project specification asks for a figure of my
   practice progress. No real session has been logged, and a figure from synthetic data
   would be a fabricated result, so the README says where the figure will appear instead.
 
 ## Stage G (2026-11-10): spaced repetition, chosen by Nick
 
 - **D-049 Stage G = spaced repetition (SM-2) for puzzles** (Nick's choice out of the four
-  options in the build prompt).
+  options in the project specification).
 - **D-050 The schedule is recomputed from `practice/puzzle_log.csv` on every use.** There is
   no schedule file, so the schedule cannot drift from the history and the log stays the only
   state. Review days are UTC days.
@@ -265,10 +265,11 @@ are recorded here too, with the test that now catches them.
   puzzles, because a CSS rule (`label { display: grid }`) overrode the `hidden` attribute.
   Fixed with a global `[hidden] { display: none !important; }`. No automated test covers
   rendering (there is no browser in the test suite); recorded here as a known gap.
-- **D-072 History rewritten to remove a personal email.** Before the repository was made
-  ready for publication, every commit was rewritten so that author, committer and the
-  `authors` field of `pyproject.toml` use the GitHub noreply address. Code is otherwise
-  unchanged, but commit ids changed. Reports generated earlier still carry the old ids;
-  each maps to a commit with identical code (checked with `git diff`, `pyproject.toml`
-  excluded): e63e0609f008 -> 400b515, 655617a991f8 -> 4e68903, 5321ef890a59 -> d447a16,
-  4505a18a9fa7 -> 2fa07ef.
+- **D-072 History rewritten before publication.** Every commit was rewritten so that
+  author, committer and the `authors` field of `pyproject.toml` use the GitHub noreply
+  address, and working notes that are not part of the project were removed from the
+  history. Code is unchanged, but commit ids changed. Reports generated earlier still carry
+  the old ids; each maps to a commit with identical code and reports (file by file
+  comparison of the trees, `pyproject.toml` and the removed notes excluded):
+  e63e0609f008 -> a8e5460, 655617a991f8 -> 60a33ea, 5321ef890a59 -> bb1d591,
+  4505a18a9fa7 -> 99c59a1.
