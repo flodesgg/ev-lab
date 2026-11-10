@@ -265,3 +265,10 @@ are recorded here too, with the test that now catches them.
   puzzles, because a CSS rule (`label { display: grid }`) overrode the `hidden` attribute.
   Fixed with a global `[hidden] { display: none !important; }`. No automated test covers
   rendering (there is no browser in the test suite); recorded here as a known gap.
+- **D-072 History rewritten to remove a personal email.** Before the repository was made
+  ready for publication, every commit was rewritten so that author, committer and the
+  `authors` field of `pyproject.toml` use the GitHub noreply address. Code is otherwise
+  unchanged, but commit ids changed. Reports generated earlier still carry the old ids;
+  each maps to a commit with identical code (checked with `git diff`, `pyproject.toml`
+  excluded): e63e0609f008 -> 400b515, 655617a991f8 -> 4e68903, 5321ef890a59 -> d447a16,
+  4505a18a9fa7 -> 2fa07ef.
