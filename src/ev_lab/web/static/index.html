@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ev-lab trainer</title>
+<style>
+  :root {
+    --surface: #fcfcfb; --panel: #ffffff; --ink: #0b0b0b; --soft: #52514e; --line: #e4e3df;
+    --accent: #2a78d6; --good: #0a7d2c; --bad: #b3261e; --warn: #8a5a00;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--surface); color: var(--ink);
+         font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  header { display: flex; align-items: baseline; gap: 24px; padding: 16px 24px;
+           border-bottom: 1px solid var(--line); }
+  header h1 { font-size: 18px; margin: 0; }
+  nav { display: flex; gap: 4px; }
+  nav button { background: none; border: 0; padding: 6px 12px; border-radius: 6px;
+               font: inherit; color: var(--soft); cursor: pointer; }
+  nav button[aria-selected="true"] { background: var(--ink); color: #fff; }
+  #glance { margin-left: auto; color: var(--soft); font-size: 14px; }
+  main { max-width: 860px; margin: 0 auto; padding: 24px; }
+  [hidden] { display: none !important; }  /* beats `label { display: grid }` etc. */
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+           padding: 20px; margin-bottom: 16px; }
+  .row { display: flex; gap: 12px; align-items: end; flex-wrap: wrap; }
+  label { display: grid; gap: 4px; font-size: 13px; color: var(--soft); }
+  input, select { font: inherit; padding: 8px 10px; border: 1px solid #c3c2b7;
+                  border-radius: 6px; background: #fff; color: var(--ink); min-width: 120px; }
+  input:focus, select:focus, button:focus-visible { outline: 2px solid var(--accent);
+                                                    outline-offset: 1px; }
+  button.primary { font: inherit; padding: 8px 16px; border-radius: 6px; cursor: pointer;
+                   border: 1px solid var(--ink); background: var(--ink); color: #fff; }
+  button.plain { font: inherit; padding: 8px 16px; border-radius: 6px; cursor: pointer;
+                 border: 1px solid #c3c2b7; background: #fff; color: var(--ink); }
+  .question { font-size: 40px; font-weight: 600; margin: 8px 0 16px;
+              font-variant-numeric: tabular-nums; }
+  .meter { display: flex; justify-content: space-between; color: var(--soft);
+           font-variant-numeric: tabular-nums; }
+  .timer { font-weight: 600; color: var(--ink); }
+  .timer.low { color: var(--bad); }
+  .good { color: var(--good); } .bad { color: var(--bad); } .warn { color: var(--warn); }
+  .muted { color: var(--soft); font-size: 14px; }
+  .statement { font-size: 18px; margin: 8px 0 16px; }
+  pre { white-space: pre-wrap; font: inherit; margin: 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line);
+           font-variant-numeric: tabular-nums; }
+  th { color: var(--soft); font-weight: 500; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .tile { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; background: #fff; }
+  .tile b { display: block; font-size: 26px; font-variant-numeric: tabular-nums; }
+  .tile span { color: var(--soft); font-size: 13px; }
+  img { max-width: 100%; border: 1px solid var(--line); border-radius: 10px; margin-top: 12px; }
+  ul.log { list-style: none; padding: 0; margin: 12px 0 0; font-variant-numeric: tabular-nums; }
+  ul.log li { padding: 4px 0; border-bottom: 1px solid var(--line); }
+  #error { color: var(--bad); min-height: 1.5em; }
+</style>
+</head>
+<body>
+<header>
+  <h1>ev-lab trainer</h1>
+  <nav role="tablist">
+    <button role="tab" data-tab="math" aria-selected="true">Mental math</button>
+    <button role="tab" data-tab="quiz" aria-selected="false">Puzzle</button>
+    <button role="tab" data-tab="market" aria-selected="false">Market</button>
+    <button role="tab" data-tab="progress" aria-selected="false">Progress</button>
+  </nav>
+  <div id="glance"></div>
+</header>
+<main>
+  <div id="error" role="alert"></div>
+
+  <section id="math">
+    <div class="panel" id="math-setup">
+      <div class="row">
+        <label>Format <select id="math-preset"></select></label>
+        <label>Level
+          <select id="math-level">
+            <option value="1">1 · easy</option><option value="2">2 · interview pace</option>
+            <option value="3">3 · hard</option>
+          </select>
+        </label>
+        <button class="primary" id="math-start">Start the clock</button>
+      </div>
+      <p class="muted" id="math-note"></p>
+    </div>
+    <div class="panel" id="math-run" hidden>
+      <div class="meter"><span id="math-count"></span><span class="timer" id="math-timer"></span></div>
+      <div class="question" id="math-question"></div>
+      <form id="math-form" class="row" autocomplete="off">
+        <label>Answer (Enter submits, empty skips)
+          <input id="math-answer" inputmode="decimal" autocomplete="off">
+        </label>
+        <button class="primary">Submit</button>
+        <button class="plain" type="button" id="math-stop">Stop</button>
+      </form>
+      <p id="math-feedback" aria-live="polite">&nbsp;</p>
+    </div>
+    <div class="panel" id="math-done" hidden>
+      <pre id="math-summary"></pre>
+      <p><button class="primary" id="math-again">Another session</button></p>
+    </div>
+  </section>
+
+  <section id="quiz" hidden>
+    <div class="panel" id="quiz-setup">
+      <p class="muted">Due reviews come first, then new puzzles. The solution appears only
+        after you answer.</p>
+      <button class="primary" id="quiz-next">Next puzzle</button>
+    </div>
+    <div class="panel" id="quiz-run" hidden>
+      <div class="muted" id="quiz-meta"></div>
+      <h2 id="quiz-title" style="margin: 4px 0 0; font-size: 20px;"></h2>
+      <p class="statement" id="quiz-statement"></p>
+      <form id="quiz-form" class="row" autocomplete="off">
+        <label id="quiz-answer-label">Answer (fraction or decimal)
+          <input id="quiz-answer" autocomplete="off">
+        </label>
+        <label id="quiz-bid-label" hidden>Bid <input id="quiz-bid" autocomplete="off"></label>
+        <label id="quiz-ask-label" hidden>Ask <input id="quiz-ask" autocomplete="off"></label>
+        <button class="primary">Submit</button>
+      </form>
+    </div>
+    <div class="panel" id="quiz-result" hidden>
+      <p id="quiz-verdict" style="font-size: 20px; font-weight: 600; margin-top: 0;"></p>
+      <pre id="quiz-explanation"></pre>
+      <table style="margin-top: 12px;">
+        <tr><th>Exact</th><td id="quiz-exact"></td></tr>
+        <tr><th>Monte Carlo</th><td id="quiz-mc"></td></tr>
+        <tr><th>Next review</th><td id="quiz-review"></td></tr>
+      </table>
+      <p><button class="primary" id="quiz-another">Next puzzle</button></p>
+    </div>
+  </section>
+
+  <section id="market" hidden>
+    <div class="panel" id="market-setup">
+      <div class="row">
+        <label>Quantity <select id="market-quantity"><option value="">random</option></select></label>
+        <button class="primary" id="market-start">Deal</button>
+      </div>
+      <p class="muted">One trader arrives per round: a noise trader (either side at random) or an
+        informed trader who already sees the next piece of X. You learn which only at the end.</p>
+    </div>
+    <div class="panel" id="market-run" hidden>
+      <h2 id="market-title" style="margin: 0; font-size: 20px;"></h2>
+      <p id="market-round" class="statement"></p>
+      <form id="market-form" class="row" autocomplete="off">
+        <label>Bid <input id="market-bid" inputmode="decimal" autocomplete="off"></label>
+        <label>Ask <input id="market-ask" inputmode="decimal" autocomplete="off"></label>
+        <button class="primary">Quote</button>
+      </form>
+      <p id="market-message" class="warn" aria-live="polite">&nbsp;</p>
+      <ul class="log" id="market-log"></ul>
+    </div>
+    <div class="panel" id="market-done" hidden>
+      <p id="market-total" style="font-size: 20px; font-weight: 600; margin-top: 0;"></p>
+      <table id="market-review"></table>
+      <p class="muted">Fair value = E[X | public information], exact. EV of the quote = half the
+        spread earned from a noise trader minus what an informed trader takes when their value
+        is outside the quote.</p>
+      <p><button class="primary" id="market-again">Another game</button></p>
+    </div>
+  </section>
+
+  <section id="progress" hidden>
+    <div class="panel">
+      <div class="tiles" id="tiles"></div>
+    </div>
+    <div class="panel">
+      <h2 style="margin-top: 0; font-size: 18px;">Weakest categories</h2>
+      <table id="weakest"></table>
+      <h2 style="font-size: 18px;">All categories</h2>
+      <table id="categories"></table>
+    </div>
+    <div class="panel" id="figures"></div>
+  </section>
+</main>
+<script>
+"use strict";
+const $ = (id) => document.getElementById(id);
+const show = (id, on) => { $(id).hidden = !on; };
+
+async function api(method, path, body) {
+  $("error").textContent = "";
+  const response = await fetch(path, {
+    method,
+    headers: { "Content-Type": "application/json" },
+    body: method === "POST" ? JSON.stringify(body || {}) : undefined,
+  });
+  const data = await response.json();
+  if (!response.ok) {
+    $("error").textContent = data.error || "request failed";
+    throw new Error(data.error);
+  }
+  return data;
+}
+
+function fillTable(table, headers, rows) {
+  table.replaceChildren();
+  const head = table.insertRow();
+  for (const h of headers) {
+    const th = document.createElement("th");
+    th.textContent = h;
+    head.appendChild(th);
+  }
+  for (const row of rows) {
+    const tr = table.insertRow();
+    for (const cell of row) tr.insertCell().textContent = cell;
+  }
+}
+
+/* ---- tabs ---- */
+for (const tab of document.querySelectorAll("nav button")) {
+  tab.addEventListener("click", () => {
+    for (const other of document.querySelectorAll("nav button")) {
+      other.setAttribute("aria-selected", String(other === tab));
+      show(other.dataset.tab, other === tab);
+    }
+    if (tab.dataset.tab === "progress") loadProgress();
+  });
+}
+
+/* ---- overview ---- */
+function glance(stats) {
+  $("glance").textContent =
+    `streak ${stats.streak} d · ${stats.reviews_due} review(s) due · ` +
+    `${stats.puzzles_solved}/${stats.puzzles_total} puzzles solved`;
+}
+
+async function loadOverview() {
+  const o = await api("GET", "/api/overview");
+  $("math-preset").replaceChildren();
+  for (const [name, p] of Object.entries(o.presets)) {
+    const option = new Option(`${name}: ${p.questions} in ${p.minutes} min`, name);
+    option.selected = name === o.default_preset;
+    $("math-preset").appendChild(option);
+  }
+  $("math-level").value = String(o.level);
+  $("math-note").textContent = o.tolerance_note;
+  for (const [id, title] of Object.entries(o.quantities)) {
+    $("market-quantity").appendChild(new Option(title, id));
+  }
+  glance(o.stats);
+}
+
+/* ---- mental math ---- */
+let deadline = 0;
+let ticker = null;
+
+function tick() {
+  const left = Math.max(0, (deadline - performance.now()) / 1000);
+  const minutes = Math.floor(left / 60);
+  const seconds = Math.floor(left % 60);
+  $("math-timer").textContent = `${minutes}:${String(seconds).padStart(2, "0")}`;
+  $("math-timer").classList.toggle("low", left < 30);
+  if (left <= 0 && ticker) {  // time is up: tell the server, which closes the session
+    clearInterval(ticker);
+    ticker = null;
+    // a moment later, so that the server's clock is surely past the deadline too
+    setTimeout(() => api("POST", "/api/math/answer", { answer: "" }).then(mathState).catch(() => {}), 400);
+  }
+}
+
+function mathState(s) {
+  if (s.done) {
+    if (ticker) { clearInterval(ticker); ticker = null; }
+    show("math-run", false);
+    show("math-done", true);
+    $("math-summary").textContent = s.summary.join("\n");
+    $("math-again").focus();
+    loadOverview();
+    return;
+  }
+  deadline = performance.now() + s.remaining * 1000;  // resync with the server's clock
+  $("math-count").textContent = `question ${s.number} of ${s.total}`;
+  $("math-question").textContent = s.question;
+  $("math-answer").value = "";
+  $("math-answer").focus();
+  tick();
+}
+
+$("math-start").addEventListener("click", async () => {
+  const s = await api("POST", "/api/math/start", {
+    preset: $("math-preset").value, level: Number($("math-level").value),
+  });
+  show("math-setup", false);
+  show("math-done", false);
+  show("math-run", true);
+  $("math-feedback").textContent = s.focus.length
+    ? `Asked more often today: ${s.focus.join(", ")}.` : " ";
+  $("math-feedback").className = "muted";
+  ticker = setInterval(tick, 250);
+  mathState(s);
+});
+
+$("math-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const s = await api("POST", "/api/math/answer", { answer: $("math-answer").value });
+  const feedback = $("math-feedback");
+  if (s.status === "invalid") {
+    feedback.textContent = "Not a number; try again (empty skips).";
+    feedback.className = "warn";
+    $("math-answer").select();
+    return;
+  }
+  if (s.status === "late") {
+    feedback.textContent = "Time is up: the last answer came after the deadline.";
+    feedback.className = "warn";
+  } else {
+    feedback.textContent = s.correct ? "Right" : `Wrong: ${s.correct_answer}`;
+    feedback.className = s.correct ? "good" : "bad";
+  }
+  mathState(s);
+});
+
+$("math-stop").addEventListener("click", async () => mathState(await api("POST", "/api/math/stop")));
+$("math-again").addEventListener("click", () => {
+  show("math-done", false);
+  show("math-setup", true);
+  $("math-start").focus();
+});
+
+/* ---- puzzle ---- */
+let quizKind = "number";
+
+async function nextPuzzle() {
+  const p = await api("POST", "/api/quiz/next");
+  quizKind = p.kind;
+  show("quiz-setup", false);
+  show("quiz-result", false);
+  show("quiz-run", true);
+  $("quiz-meta").textContent = `${p.reason} · difficulty ${p.difficulty} · ${p.tags.join(", ")}`;
+  $("quiz-title").textContent = p.title;
+  $("quiz-statement").textContent = p.statement;
+  const market = p.kind === "market";
+  show("quiz-answer-label", !market);
+  show("quiz-bid-label", market);
+  show("quiz-ask-label", market);
+  for (const id of ["quiz-answer", "quiz-bid", "quiz-ask"]) $(id).value = "";
+  $(market ? "quiz-bid" : "quiz-answer").focus();
+}
+
+$("quiz-next").addEventListener("click", nextPuzzle);
+$("quiz-another").addEventListener("click", nextPuzzle);
+
+$("quiz-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const body = quizKind === "market"
+    ? { bid: $("quiz-bid").value, ask: $("quiz-ask").value }
+    : { answer: $("quiz-answer").value };
+  const r = await api("POST", "/api/quiz/answer", body);
+  show("quiz-run", false);
+  show("quiz-result", true);
+  $("quiz-verdict").textContent =
+    `${r.correct ? "Correct" : "Not correct"} (${r.detail}). Time: ${Math.round(r.seconds)} s.`;
+  $("quiz-verdict").className = r.correct ? "good" : "bad";
+  $("quiz-explanation").textContent = r.explanation;
+  $("quiz-exact").textContent = r.exact;
+  $("quiz-mc").textContent = r.monte_carlo;
+  $("quiz-review").textContent = r.next_review;
+  $("quiz-another").focus();
+  loadOverview();
+});
+
+/* ---- market ---- */
+function marketState(s) {
+  if (s.done) {
+    show("market-run", false);
+    show("market-done", true);
+    $("market-total").textContent = `X = ${s.x}. Total P&L: ${s.total_pnl}`;
+    fillTable(
+      $("market-review"),
+      ["round", "public", "fair value", "my quote", "contains fair", "trader (their value)",
+       "trade", "P&L", "EV of quote"],
+      s.review.map((r) => [r.round, r.public, r.fair_value, r.quote, r.contains_fair, r.trader,
+                           r.trade, r.pnl, r.expected_pnl]),
+    );
+    $("market-again").focus();
+    loadOverview();
+    return;
+  }
+  $("market-round").textContent =
+    `Round ${s.round} of ${s.rounds}. Public: ${s.public}. Max width: ${s.max_width}.`;
+  $("market-bid").value = "";
+  $("market-ask").value = "";
+  $("market-bid").focus();
+}
+
+$("market-start").addEventListener("click", async () => {
+  const s = await api("POST", "/api/market/start", { quantity: $("market-quantity").value });
+  show("market-setup", false);
+  show("market-done", false);
+  show("market-run", true);
+  $("market-title").textContent = `Make me a market: X = ${s.title.toLowerCase()}`;
+  $("market-log").replaceChildren();
+  $("market-message").textContent = " ";
+  marketState(s);
+});
+
+$("market-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const bid = $("market-bid").value;
+  const ask = $("market-ask").value;
+  const s = await api("POST", "/api/market/quote", { bid, ask });
+  if (s.status === "invalid") {
+    $("market-message").textContent = s.error;
+    $("market-bid").select();
+    return;
+  }
+  $("market-message").textContent = " ";
+  const item = document.createElement("li");
+  item.textContent = `${bid} @ ${ask} → ${s.trade}`;
+  $("market-log").appendChild(item);
+  marketState(s);
+});
+
+$("market-again").addEventListener("click", () => {
+  show("market-done", false);
+  show("market-setup", true);
+  $("market-start").focus();
+});
+
+/* ---- progress ---- */
+async function loadProgress() {
+  const { stats, figures } = await api("POST", "/api/stats");
+  glance(stats);
+  const tiles = [
+    [stats.streak, "day streak"], [stats.practice_days, "practice days"],
+    [stats.math_answers, "math answers"], [stats.reviews_due, "reviews due"],
+    [`${stats.puzzles_solved}/${stats.puzzles_total}`, "puzzles solved"],
+    [stats.market_games, "market games"],
+    [`${stats.market_quotes_containing_fair}/${stats.market_rounds}`, "quotes containing fair value"],
+  ];
+  $("tiles").replaceChildren(...tiles.map(([value, label]) => {
+    const tile = document.createElement("div");
+    tile.className = "tile";
+    const b = document.createElement("b");
+    b.textContent = value;
+    const span = document.createElement("span");
+    span.textContent = label;
+    tile.append(b, span);
+    return tile;
+  }));
+  const rows = (items) => items.map((c) =>
+    [c.category, c.answers, `${Math.round(c.accuracy * 100)}%`, c.median_seconds.toFixed(1)]);
+  const headers = ["category", "answers", "accuracy", "median s"];
+  if (stats.weakest.length) {
+    fillTable($("weakest"), headers, rows(stats.weakest));
+  } else {
+    fillTable($("weakest"), ["Not enough answers yet to rank categories."], []);
+  }
+  fillTable($("categories"), headers, rows(stats.categories));
+  $("figures").replaceChildren(...(figures.length ? figures.map((name) => {
+    const img = document.createElement("img");
+    img.src = `/figures/${name}?t=${Date.now()}`;
+    img.alt = name === "math_accuracy.png"
+      ? "Accuracy per day by category" : "Median seconds per answer per day by category";
+    return img;
+  }) : [Object.assign(document.createElement("p"), {
+    className: "muted", textContent: "No practice logged yet. Figures appear after the first session.",
+  })]));
+}
+
+loadOverview();
+</script>
+</body>
+</html>

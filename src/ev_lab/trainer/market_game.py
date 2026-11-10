@@ -91,6 +91,33 @@ def review_lines(game: MarketGame) -> list[str]:
     return out
 
 
+def review_rows(game: MarketGame) -> list[dict[str, str]]:
+    """The review as one record per round (for the web page)."""
+    return [
+        {
+            "round": str(r.round),
+            "public": _known_text(game, r.known),
+            "fair_value": dec(r.fair_value, 3),
+            "quote": f"{dec(r.bid)} @ {dec(r.ask)}",
+            "contains_fair": "yes" if r.bid <= r.fair_value <= r.ask else "no",
+            "trader": "noise" if r.trader_value is None else f"informed ({dec(r.trader_value, 2)})",
+            "trade": _trade_text(r),
+            "pnl": signed(game.pnl(r)),
+            "expected_pnl": signed(r.expected_pnl, 3),
+        }
+        for r in game.records
+    ]
+
+
+def known_text(game: MarketGame) -> str:
+    """What is public in the current round."""
+    return _known_text(game, game.known())
+
+
+def trade_text(record: RoundRecord) -> str:
+    return "No trade." if record.side == "none" else "A trader " + _trade_text(record) + "."
+
+
 def log_game(practice_dir: Path, session_id: str, game: MarketGame) -> None:
     now = datetime.now(UTC).isoformat(timespec="seconds")
     for r in game.records:

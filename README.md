@@ -82,6 +82,7 @@ Daily practice:
 
 ```bash
 uv run ev daily       # 10 minutes: mental math, one puzzle, one market game
+uv run ev web         # the same trainer as a local web page, with a live countdown
 uv run ev stats       # streak, weakest categories -> reports/practice/
 ```
 
@@ -119,6 +120,7 @@ src/ev_lab/
   cards/     deck, oracle and fast evaluators, equity, ranges, pot odds
   games/     matrix games (LP), regret matching, Kuhn poker, CFR, Leduc hold'em with CFR+
   kelly/     Kelly fraction, path simulation, estimated edge
+  web/       the trainer as a local web page (standard library server, one HTML file)
   reports/   report generators (markdown and PNG)
 cpp/         the hand evaluator in C++17 (header + command-line tool)
 tests/       one test module per area; tests/expected/ holds stored report outputs

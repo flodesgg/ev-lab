@@ -238,3 +238,30 @@ are recorded here too, with the test that now catches them.
   enumeration of all 7-card hands (about a second and a half in C++).
 - **D-064 Speeds in the report are one measurement on one machine** and are labelled so. The
   C++ number times evaluation only.
+
+## Stage G, fourth option (2026-11-10): a local web page for the trainer, chosen by Nick
+
+- **D-065 Standard library only.** `http.server` plus one self-contained HTML file with
+  inline CSS and JavaScript: no web framework, no build step, no file fetched from the
+  internet. The server binds to 127.0.0.1, so the page cannot be reached from another
+  machine. Start: `uv run ev web`.
+- **D-066 The page is a second front end, not a second trainer.** It calls
+  `web/app.py::TrainerApp`, which uses the same question generators, adaptive weights,
+  puzzle scheduling, market engine, grading functions and append-only logs as the terminal
+  commands. A session on the page and one in the terminal land in the same history.
+- **D-067 The server's clock is the judge.** The countdown in the browser is a display that
+  is re-synchronised on every answer; whether an answer was in time is decided on the
+  server, with the same rule as in the terminal (an answer after the deadline is discarded).
+- **D-068 No spoilers over the wire.** A correct answer, an explanation or the hidden value
+  of a market game is only ever part of the reply to a submitted answer; tests check the
+  keys of the earlier replies.
+- **D-069 Tested without sockets.** `web/server.py::respond` maps a request to a response as
+  a pure function; tests call it and `TrainerApp.handle` directly. The real server and page
+  were exercised by hand in a browser against a scratch copy of the logs.
+- **D-070 The timed session exists twice:** `math_session.run_math_session` (terminal loop)
+  and `math_drill.MathDrill` (step by step, for the page). Same rules, separately tested.
+  Merging them would change how the terminal tests count clock reads; left as is.
+- **D-071 Bug found while checking the page:** bid and ask fields were shown for ordinary
+  puzzles, because a CSS rule (`label { display: grid }`) overrode the `hidden` attribute.
+  Fixed with a global `[hidden] { display: none !important; }`. No automated test covers
+  rendering (there is no browser in the test suite); recorded here as a known gap.

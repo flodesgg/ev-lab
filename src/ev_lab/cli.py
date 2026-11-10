@@ -11,6 +11,7 @@ Commands
   quiz                one probability puzzle, unseen or previously wrong first
   market              make-me-a-market game with a noise and an informed trader
   stats               practice statistics -> reports/practice/
+  web                 the trainer as a local web page (127.0.0.1 only)
   equity H1 H2 ...    Hold'em equity of hands or ranges (exact or Monte Carlo)
   pot-odds            EV of a call from equity, pot and bet size
   games               matrix games, regret matching, Kuhn CFR -> reports/games/
@@ -36,6 +37,7 @@ from ev_lab.games.cli import register as register_games
 from ev_lab.kelly.cli import register as register_kelly
 from ev_lab.puzzles.cli import puzzle_app
 from ev_lab.trainer.cli import register as register_trainer
+from ev_lab.web.cli import register as register_web
 
 app = typer.Typer(
     help="EV Lab: exact probability, game theory and bet sizing (offline study only).",
@@ -44,6 +46,7 @@ app = typer.Typer(
 )
 app.add_typer(puzzle_app, name="puzzle")
 register_trainer(app)
+register_web(app)
 register_cards(app)
 register_games(app)
 register_kelly(app)
